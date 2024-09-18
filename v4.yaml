@@ -38,10 +38,26 @@ paths:
       description: |
         This endpoint retrieves premium listings for a specified location.
         The location is identified by a unique ID included in the URL path.
+        This section contains endpoints for retrieving listings data. Use these endpoints to get
+        various types of listings such as premium, organic, etc.
+        This API allows you to retrieve premium listings for a specific location.
+        You will need an API key to access this endpoint. 
+        Ensure you pass the API key in the `Authorization` header.
+      
+        ### How to Use:
+        1. Replace `{{v4_end_point}}` with the actual API server URL.
+        2. Use your provided API key and set it in the `Authorization` header.
+    
+      Example request:
+       ```
+       GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
+       Authorization: Bearer {{api_key}}
+       ```
         
         - **Authorization Required**: This endpoint requires an API key. 
         - **Location ID**: Use a valid location ID in the path.
         - **API Key**: Pass your API key as a Bearer token in the `Authorization` header.
+        
 
       parameters:
         - name: Authorization
