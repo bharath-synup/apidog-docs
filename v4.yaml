@@ -2,19 +2,7 @@ openapi: 3.0.0
 info:
   title: New Collection - Premium Listings API
   description: |
-    This API allows you to retrieve premium listings for a specific location.
-    You will need an API key to access this endpoint. 
-    Ensure you pass the API key in the `Authorization` header.
     
-    ### How to Use:
-    1. Replace `{{v4_end_point}}` with the actual API server URL.
-    2. Use your provided API key and set it in the `Authorization` header.
-    
-    Example request:
-    ```
-    GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
-    Authorization: Bearer {{api_key}}
-    ```
     
   version: 1.0.0
 
@@ -27,6 +15,19 @@ tags:
     description: |
       This section contains endpoints for retrieving listings data. Use these endpoints to get
       various types of listings such as premium, organic, etc.
+      This API allows you to retrieve premium listings for a specific location.
+      You will need an API key to access this endpoint. 
+      Ensure you pass the API key in the `Authorization` header.
+      
+      ### How to Use:
+      1. Replace `{{v4_end_point}}` with the actual API server URL.
+      2. Use your provided API key and set it in the `Authorization` header.
+    
+      Example request:
+       ```
+       GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
+       Authorization: Bearer {{api_key}}
+       ```
 
 paths:
   /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
