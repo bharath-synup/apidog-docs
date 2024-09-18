@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Premium Listings API
+  description: |
+    This API allows you to retrieve premium listings for a specified location. 
+    You need an API key to access this endpoint. Ensure that you pass the API key 
+    in the `Authorization` header as a Bearer token.
+
+    ### Usage Instructions:
+    1. Replace `{{v4_end_point}}` with the actual API server URL.
+    2. Use the API key provided to you in the `Authorization` header.
+
+    Example request:
+    ```
+    GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
+    Authorization: Bearer {{api_key}}
+    ```
+
+  version: 1.0.0
+
+servers:
+  - url: http://{{v4_end_point}}
+    description: The base URL for the API. Replace `{{v4_end_point}}` with the actual server URL.
+
+tags:
+  - name: Listings Copy
+    description: This tag contains endpoints for retrieving listings information, including premium listings.
+
+paths:
+  /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
+    get:
+      tags:
+        - Listings Copy
+      summary: Retrieve Premium Listings for a Location
+      description: |
+        Retrieve premium listings for a specified location using this endpoint. The location 
+        is identified by a unique ID in the URL path.
+        
+        **Note**: This endpoint requires authentication via an API key, passed in the 
+        `Authorization` header as a Bearer token.
+
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: |
+            Your API key for authentication. Use the format:
+            ```
+            Authorization: Bearer {{api_key}}
+            ```
+          schema:
+            type: string
+          example: Bearer {{api_key}}
+
+      responses:
+        '200':
+          description: |
+            A successful response returns the premium listings for the specified location, 
+            along with the possible statuses of the listings.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    description: A list of premium listings.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for the listing.
+                        title:
+                          type: string
+                          description: The title of the premium listing.
+                        url:
+                          type: string
+                          description: The URL of the listing.
+                  listing_statuses:
+                    type: array
+                    description: A list of possible statuses for the listings.
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          description: The status value.
+                        description:
+                          type: string
+                          description: A description of the status.
+              example:
+                listings:
+                  - id: "12345"
+                    title: "Premium Listing Example"
+                    url: "https://example.com/listing/12345"
+                listing_statuses:
+                  - value: "Awaiting location approval."
+                    description: "The listing is waiting for location approval."
+                  - value: "Submitting to Partner."
+                    description: "The listing information is being submitted to a partner site."
+                  - value: "Partner experiencing issues; awaiting response."
+                    description: "The partner site is experiencing issues; awaiting response."
+                  - value: "Information submitted to partner; awaiting response."
+                    description: "The listing has been submitted; awaiting partner response."
+                  - value: "Awaiting partner geo-code."
+                    description: "The listing is waiting for the partner's geo-code."
+                  - value: "Facebook page connected to the account is not accessible. Please reconnect."
+                    description: "The Facebook page connected to the listing is inaccessible; reconnection is needed."
+
+        '401':
+          description: Unauthorized. The request requires a valid API key.
+        '404':
+          description: Location not found. Verify the location ID and try again.
