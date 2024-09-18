@@ -89,36 +89,11 @@ paths:
                         url:
                           type: string
                           description: The URL of the listing.
-                  listing_statuses:
-                    type: array
-                    description: Possible statuses for the listings.
-                    items:
-                      type: object
-                      properties:
-                        value:
-                          type: string
-                          description: The status value.
-                        description:
-                          type: string
-                          description: A description of the status.
               example:
                 listings:
                   - id: "12345"
                     title: "Premium Listing Example"
                     url: "https://example.com/listing/12345"
-                listing_statuses:
-                  - value: "Awaiting location approval."
-                    description: "The listing is waiting for the location approval."
-                  - value: "Submitting to Partner."
-                    description: "The listing information is being submitted to a partner site."
-                  - value: "Partner experiencing issues; awaiting response."
-                    description: "The partner site is having issues, and the listing is awaiting a response."
-                  - value: "Information submitted to partner; awaiting response."
-                    description: "The listing information has been submitted, awaiting a response from the partner."
-                  - value: "Awaiting partner geo-code."
-                    description: "The listing is waiting for the partner to return the geo-code."
-                  - value: "Facebook page connected to the account is not accessible. Please reconnect."
-                    description: "The Facebook page connected to the listing is inaccessible; reconnection is needed."
         '401':
           description: Unauthorized. The request requires a valid API key.
         '404':
