@@ -1,124 +1,198 @@
----
-"/api/v4/grid-report/b1584eb4-73aa-4329-b9dd-2c368747f2e7":
-  post:
-    parameters:
-    - in: header
-      name: authorization
-      schema:
-        type: string
-        example: API nC3IaYImyrUzMv_NH6MrzDfp-CA
-      required: true
-    - in: header
-      name: content-type
-      schema:
-        type: string
-        example: application/json
-      required: true
-    requestBody: {}
-    responses:
-      '200':
-        description: HTTP Status 200
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: object
-                properties:
-                  gridrankReportById:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: b1584eb4-73aa-4329-b9dd-2c368747f2e7
-                      locationId:
-                        type: string
-                        example: '1043837'
-                      accountId:
-                        type: string
-                        example: '22567'
-                      keyword:
-                        type: string
-                        example: organic
-                      businessName:
-                        type: string
-                        example: Cinnamon
-                      businessStreet:
-                        type: string
-                        example: 123 William St, Manhattan, US
-                      businessCity:
-                        type: string
-                        example: Manhattan
-                      businessState:
-                        type: string
-                        example: New York
-                      businessCountry:
-                        type: string
-                        example: US
-                      gridSize:
-                        type: integer
-                        example: 3
-                      gridDistance:
-                        type: integer
-                        example: 2.5
-                      gridDistanceUnit:
-                        type: string
-                        example: km
-                      gridDistanceInKm:
-                        type: integer
-                        example: 2
-                      ranks:
-                        type: array
-                        items:
-                          type: object
-                          example:
-                          - rank: 100
-                            latitude: 40.69653167187975
-                            longitude: -74.02395815398575
-                          - rank: 100
-                            latitude: 40.69653167187975
-                            longitude: -74.00718
-                          - rank: 100
-                            latitude: 40.69653167187975
-                            longitude: -73.99040184601428
-                          - rank: 100
-                            latitude: 40.70925
-                            longitude: -74.02395815398575
-                          - rank: 100
-                            latitude: 40.70925
-                            longitude: -74.00718
-                          - rank: 100
-                            latitude: 40.70925
-                            longitude: -73.99040184601428
-                          - rank: 100
-                            latitude: 40.721968328120255
-                            longitude: -74.02395815398575
-                          - rank: 100
-                            latitude: 40.721968328120255
-                            longitude: -74.00718
-                          - rank: 100
-                            latitude: 40.721968328120255
-                            longitude: -73.99040184601428
-                      averageRank:
-                        type: integer
-                        example: 100
-                      topOneShare:
-                        type: integer
-                        example: 0
-                      topTwoShare:
-                        type: integer
-                        example: 0
-                      status:
-                        type: string
-                        example: COMPLETED
-                      latitude:
-                        type: integer
-                        example: 40.70925
-                      longitude:
-                        type: integer
-                        example: -74.00718
-                      placeId: 
-                      createdAt:
-                        type: string
-                        example: '1721036268193'
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Synupv4APIDemo",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Grid Rank"
+    }
+  ],
+  "paths": {
+  "/api/v4/grid-report/b1584eb4-73aa-4329-b9dd-2c368747f2e7": {
+    "get": {
+      "parameters": [
+        {
+          "in": "header",
+          "name": "authorization",
+          "schema": {
+            "type": "string",
+            "example": "API nC3IaYImyrUzMv_NH6MrzDfp-CA"
+          },
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "content-type",
+          "schema": {
+            "type": "string",
+            "example": "application/json"
+          },
+          "required": true
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "HTTP Status 200"
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "gridrankReportById": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "b1584eb4-73aa-4329-b9dd-2c368747f2e7"
+                        },
+                        "locationId": {
+                          "type": "string",
+                          "example": "1043837"
+                        },
+                        "accountId": {
+                          "type": "string",
+                          "example": "22567"
+                        },
+                        "keyword": {
+                          "type": "string",
+                          "example": "organic"
+                        },
+                        "businessName": {
+                          "type": "string",
+                          "example": "Cinnamon"
+                        },
+                        "businessStreet": {
+                          "type": "string",
+                          "example": "123 William St, Manhattan, US"
+                        },
+                        "businessCity": {
+                          "type": "string",
+                          "example": "Manhattan"
+                        },
+                        "businessState": {
+                          "type": "string",
+                          "example": "New York"
+                        },
+                        "businessCountry": {
+                          "type": "string",
+                          "example": "US"
+                        },
+                        "gridSize": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "gridDistance": {
+                          "type": "integer",
+                          "example": 2.5
+                        },
+                        "gridDistanceUnit": {
+                          "type": "string",
+                          "example": "km"
+                        },
+                        "gridDistanceInKm": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "ranks": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "example": [
+                              {
+                                "rank": 100,
+                                "latitude": 40.69653167187975,
+                                "longitude": -74.02395815398575
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.69653167187975,
+                                "longitude": -74.00718
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.69653167187975,
+                                "longitude": -73.99040184601428
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.70925,
+                                "longitude": -74.02395815398575
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.70925,
+                                "longitude": -74.00718
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.70925,
+                                "longitude": -73.99040184601428
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.721968328120255,
+                                "longitude": -74.02395815398575
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.721968328120255,
+                                "longitude": -74.00718
+                              },
+                              {
+                                "rank": 100,
+                                "latitude": 40.721968328120255,
+                                "longitude": -73.99040184601428
+                              }
+                            ]
+                          }
+                        },
+                        "averageRank": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "topOneShare": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "topTwoShare": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "COMPLETED"
+                        },
+                        "latitude": {
+                          "type": "integer",
+                          "example": 40.70925
+                        },
+                        "longitude": {
+                          "type": "integer",
+                          "example": -74.00718
+                        },
+                        "placeId": null,
+                        "createdAt": {
+                          "type": "string",
+                          "example": "1721036268193"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+}
