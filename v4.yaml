@@ -1,25 +1,90 @@
 openapi: 3.0.0
 info:
-  title: New Collection
+  title: New Collection - Premium Listings API
+  description: |
+    This API allows you to retrieve premium listings for a specific location.
+    You will need an API key to access this endpoint. 
+    Ensure you pass the API key in the `Authorization` header.
+    
+    ### How to Use:
+    1. Replace `{{v4_end_point}}` with the actual API server URL.
+    2. Use your provided API key and set it in the `Authorization` header.
+    
+    Example request:
+    ```
+    GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
+    Authorization: Bearer {{api_key}}
+    ```
+    
   version: 1.0.0
+
 servers:
   - url: http://{{v4_end_point}}
+    description: The base URL for the API. Replace `{{v4_end_point}}` with the actual endpoint.
+
 tags:
   - name: Listings Copy
+    description: |
+      This section contains endpoints for retrieving listings data. Use these endpoints to get
+      various types of listings such as premium, organic, etc.
+
 paths:
   /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
     get:
       tags:
         - Listings Copy
-      summary: Get Premium listings for a location
+      summary: Retrieve Premium Listings for a Location
+      description: |
+        This endpoint retrieves premium listings for a specified location.
+        The location is identified by a unique ID included in the URL path.
+        
+        - **Authorization Required**: This endpoint requires an API key. 
+        - **Location ID**: Use a valid location ID in the path.
+        - **API Key**: Pass your API key as a Bearer token in the `Authorization` header.
+
       parameters:
         - name: Authorization
           in: header
+          required: true
+          description: |
+            Your API key for authentication. Use the format:
+            ```
+            Authorization: Bearer {{api_key}}
+            ```
           schema:
             type: string
-          example: '{{api_key}}'
+          example: Bearer {{api_key}}
+
       responses:
         '200':
-          description: Successful response
+          description: |
+            A successful response containing the premium listings for the specified location.
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    description: A list of premium listings.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for the listing.
+                        title:
+                          type: string
+                          description: The title of the premium listing.
+                        url:
+                          type: string
+                          description: The URL of the listing.
+              example:
+                listings:
+                  - id: "12345"
+                    title: "Premium Listing Example"
+                    url: "https://example.com/listing/12345"
+        '401':
+          description: Unauthorized. The request requires a valid API key.
+        '404':
+          description: Location not found.
