@@ -57,6 +57,18 @@ paths:
           description: |
             A successful response returns the premium listings for the specified location, 
             along with the possible statuses of the listings.
+
+            ### Listing Statuses:
+
+            | **Status Value** | **Description** |
+            |------------------|-----------------|
+            | Awaiting location approval | The listing is waiting for location approval. |
+            | Submitting to Partner       | The listing information is being submitted to a partner site. |
+            | Partner experiencing issues | The partner site is experiencing issues; awaiting response. |
+            | Information submitted to partner | The listing has been submitted; awaiting partner response. |
+            | Awaiting partner geo-code   | The listing is waiting for the partner's geo-code. |
+            | Facebook page not accessible | The Facebook page connected to the listing is inaccessible; reconnection is needed. |
+
           content:
             application/json:
               schema:
