@@ -2,7 +2,19 @@ openapi: 3.0.0
 info:
   title: New Collection - Premium Listings API
   description: |
+    This API allows you to retrieve premium listings for a specific location.
+    You will need an API key to access this endpoint. 
+    Ensure you pass the API key in the `Authorization` header.
     
+    ### How to Use:
+    1. Replace `{{v4_end_point}}` with the actual API server URL.
+    2. Use your provided API key and set it in the `Authorization` header.
+    
+    Example request:
+    ```
+    GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
+    Authorization: Bearer {{api_key}}
+    ```
     
   version: 1.0.0
 
@@ -15,22 +27,9 @@ tags:
     description: |
       This section contains endpoints for retrieving listings data. Use these endpoints to get
       various types of listings such as premium, organic, etc.
-      This API allows you to retrieve premium listings for a specific location.
-      You will need an API key to access this endpoint. 
-      Ensure you pass the API key in the `Authorization` header.
-      
-      ### How to Use:
-      1. Replace `{{v4_end_point}}` with the actual API server URL.
-      2. Use your provided API key and set it in the `Authorization` header.
-    
-      Example request:
-       ```
-       GET http://{{v4_end_point}}/locations/TG9jYXRpb246NzAzNTY1/listings/premium
-       Authorization: Bearer {{api_key}}
-       ```
 
 paths:
-  /locations/{locationId}/listings/premium:
+  /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
     get:
       tags:
         - Listings Copy
@@ -38,32 +37,23 @@ paths:
       description: |
         This endpoint retrieves premium listings for a specified location.
         The location is identified by a unique ID included in the URL path.
-        Use this endpoint to retrieve premium listings for a specific location.
-        An API key is required to access this endpoint. Ensure you pass the API key in the `Authorization` header.
-
-        ### How to Use:
-        1. Replace `{{v4_end_point}}` with the actual API server URL.
-        2. Use your provided API key and set it in the `Authorization` header.
-      
-        - **Authorization Required**: This endpoint requires an API key.
+        
+        - **Authorization Required**: This endpoint requires an API key. 
         - **Location ID**: Use a valid location ID in the path.
         - **API Key**: Pass your API key as a Bearer token in the `Authorization` header.
-      
+
       parameters:
-        - name: locationId
-          in: path
-          required: true
-          description: The unique ID of the location.
-          schema:
-            type: string
-          example: TG9jYXRpb246NzAzNTY1
         - name: Authorization
           in: header
           required: true
-          description: Your API key for authentication. Use the format: `Authorization: Bearer {api_key}`
+          description: |
+            Your API key for authentication. Use the format:
+            ```
+            Authorization: Bearer {{api_key}}
+            ```
           schema:
             type: string
-          example: Bearer {api_key}
+          example: Bearer {{api_key}}
 
       responses:
         '200':
