@@ -1,0 +1,612 @@
+openapi: 3.0.0
+info:
+  title: v4-Locations
+  description: Location related API queries for v4
+  version: 1.0.0
+servers:
+  - url: http://{{location_end_point}}
+  - url: http://{{v4_end_point}}
+  - url: http://{{v4_end_point}}{{query_params}}
+  - url: http://{{location_end_point}}{{query_params}}
+  - url: http://{{photos_end_point}}
+  - url: http://{{remove_photos_end_point}}
+  - url: http://{{update_end_point}}
+  - url: http://{{archive_end_point}}
+  - url: http://{{activate_end_point}}
+  - url: http://{{subscription_end_point}}
+  - url: http://{{folder_end_point}}
+  - url: http://{{rename_folder_end_point}}
+  - url: http://{{remove_folder_end_point}}
+  - url: http://{{tags_end_point}}
+  - url: http://{{remove_tags_end_point}}
+  - url: http://{{folders_end_point}}
+  - url: http://{{roles_end_point}}
+  - url: http://{{users_end_point}}
+  - url: http://{{users_by_ids}}{{query_params}}
+  - url: http://{{f}}
+  - url: https://rohit.synup.com
+paths:
+  /:
+    post:
+      tags:
+        - default
+      summary: Folder Edit
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - default
+      summary: List Users by Ids
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /plan-sites:
+    get:
+      tags:
+        - default
+      summary: Plan Sites
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /star:
+    post:
+      tags:
+        - default
+      summary: Star/Un Star Photos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  locationId: TG9jYXRpb246MjA4MTU=
+                  mediaIds:
+                    - TWVkaWFGaWxlOjIwMjMx
+                  starred: true
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /create:
+    post:
+      tags:
+        - default
+      summary: create user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: |-
+                {
+                    "input":{
+                        "email":"{{user_email}}",
+                        "roleId":"{{role_id}}",
+                        "firstName":"{{user_name}}",
+                        "directCustomer":{{direct_customer}}    
+                    }
+                }
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /{folder_id}/info:
+    get:
+      tags:
+        - default
+      summary: Folder info
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+        - name: folder_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /tree:
+    get:
+      tags:
+        - default
+      summary: Folder Tree
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /edit:
+    post:
+      tags:
+        - default
+      summary: Edit Folder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  folderId: '{{folderId}}'
+                  folderName: '{{folderName}}'
+                  locationIds: []
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /locations/add:
+    post:
+      tags:
+        - default
+      summary: add locations for user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: |-
+                {"input":{
+                    "userId":"{{user_id}}",
+                    "locationIds":{{location_ids}}
+                }}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /folders/add:
+    post:
+      tags:
+        - default
+      summary: add folders for user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: |-
+                {
+                    "input":{
+                        "userId":"{{user_id}}",
+                        "folderIds":{{folder_ids}}
+                    }
+                }
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /{folder_id}/users:
+    get:
+      tags:
+        - default
+      summary: Users assigned to folder
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+        - name: folder_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /{encoded_user_id}/resources:
+    get:
+      tags:
+        - default
+      summary: List User Resources
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+        - name: encoded_user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /locations/remove:
+    post:
+      tags:
+        - default
+      summary: remove locations for user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: |-
+                {
+                    "input":{
+                        "userId":"{{user_id}}",
+                        "locationIds":{{location_ids}}
+                    }
+                }
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /folders/remove:
+    post:
+      tags:
+        - default
+      summary: remove folders for user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: |-
+                {
+                    "input":{
+                        "userId":"{{user_id}}",
+                        "folderIds":{{folder_ids}}
+                    }
+                }
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /update:
+    post:
+      tags:
+        - default
+      summary: update user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  id: VXNlcjo2MDk1OA==
+                  email: pttqa1+4988@gmail.com
+                  firstName: pttqa1+4187
+                  roleId: Q3VzdG9tUm9sZTo1OTE5
+                  lastName: ''
+                  phone: ''
+                  archived: false
+                  directCustomer: true
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /bulk-upload:
+    post:
+      tags:
+        - default
+      summary: Create Locations in Bulk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  csvUrl: https://cdn.filestackcontent.com/4RQkAYPETzG1cMjO87gl
+                  filename: 1736c787e592217e97ad9e872a82eb57.csv
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /bulk-upload/QnVsa1VwbG9hZFRhc2s6NzRiNzc4ZGUtOWZmOS00OGI1LWJkNjctN2MzNWMzMzQ3MzA0:
+    get:
+      tags:
+        - default
+      summary: Bulk Upload details
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v4/locations/TG9jYXRpb246MTI5Njkw/google-analytics:
+    get:
+      tags:
+        - default
+      summary: >-
+        https://rohit.synup.com/api/v4/locations/TG9jYXRpb246MTI5Njkw/google-analytics?fromDate=2021-09-01&toDate=2021-09-21
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: API JLYTGFgzbuIx44HXwHmXIDdN1Zo
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+          example: '2021-09-01'
+        - name: toDate
+          in: query
+          schema:
+            type: string
+          example: '2021-09-21'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /locations/listings/duplicates:
+    get:
+      tags:
+        - default
+      summary: Duplicate Listings Rollup
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /locations/listings/mark-as-duplicate:
+    post:
+      tags:
+        - default
+      summary: Mark as duplicate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  locationId: TG9jYXRpb246NzM1Mzc=
+                  listingItemIds:
+                    - TGlzdGluZ0l0ZW06MzMzMjkyOQ==
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /locations/listings/mark-as-not-duplicate:
+    post:
+      tags:
+        - default
+      summary: Mark as not duplicate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  listingItemIds:
+                    - TGlzdGluZ0l0ZW06MzMzMjkzOA==
+                  locationId: TG9jYXRpb246NzM1Mzc=
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /locations/TG9jYXRpb246NzM0NTE=/listings/duplicates:
+    get:
+      tags:
+        - default
+      summary: Get duplicate listings for location
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+        - name: page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connected-accounts:
+    get:
+      tags:
+        - default
+      summary: Get Connected Accounts
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connected-accounts/disconnect-google:
+    post:
+      tags:
+        - default
+      summary: Disconnect google connected account
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connected-accounts/disconnect-facebook:
+    post:
+      tags:
+        - default
+      summary: Disconnect Facebook Connected Account
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connected-accounts/disconnect-listing:
+    post:
+      tags:
+        - default
+      summary: Disconnect a connected account location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                input:
+                  locationId: TG9jYXRpb246Mjc1ODIx
+                  site: FACEBOOK
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: '{{api_key}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
