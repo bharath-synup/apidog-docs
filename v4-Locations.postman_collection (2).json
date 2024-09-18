@@ -1,0 +1,4811 @@
+{
+	"info": {
+		"_postman_id": "3c01d199-7bfb-4246-a3ea-bbae7d861f28",
+		"name": "v4-Locations",
+		"description": "Location related API queries for v4",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33311211",
+		"_collection_link": "https://qa4444-3437.postman.co/workspace/QA~8157705e-ed92-41b7-8ece-0401edaac983/collection/33311211-3c01d199-7bfb-4246-a3ea-bbae7d861f28?action=share&source=collection_link&creator=33311211"
+	},
+	"item": [
+		{
+			"name": "Locations",
+			"item": [
+				{
+					"name": "Locations Create",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Setting location name, owner email, store id and phone no",
+									"",
+									"pm.variables.set(\"location_name\", pm.variables.replaceIn('{{$randomCompanyName}}'))",
+									"pm.variables.set(\"phone_no\", String(pm.variables.replaceIn('{{$randomPhoneNumber}}')).replace(/-/g,\"\"))",
+									"pm.variables.set(\"owner_email\", \"pttqa1\" + \"+\" +String(Math.floor(Math.random()*10000))+ \"@gmail.com\")",
+									"pm.variables.set(\"store_id\", pm.variables.replaceIn('{{$randomInt}}'+'{{$randomLocale}}'))",
+									"console.log(pm.variables.get(\"store_id\"))",
+									"let businessHours = [",
+									"    {\"day\":\"MONDAY\",\"slots\":[{\"start\":\"09:00 AM\",\"end\":\"05:00 PM\"}],\"specialDate\":null,\"type\":\"OPEN\"},",
+									"    {\"day\":\"SATURDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"CLOSED\"},",
+									"    {\"day\":\"TUESDAY\",\"slots\":[{\"start\":\"09:00 AM\",\"end\":\"01:00 PM\"},{\"start\":\"02:00 PM\",\"end\":\"05:00 PM\"}],\"specialDate\":null,\"type\":\"OPEN\"},",
+									"    {\"day\":\"THURSDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"OPEN_24x7\"},",
+									"    {\"day\":\"FRIDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"CLOSED\"},",
+									"    {\"day\":\"WEDNESDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"OPEN_24x7\"},",
+									"    {\"day\":\"SUNDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"CLOSED\"}]",
+									"pm.variables.set(\"business_hours\", JSON.stringify(businessHours));",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const create_location_result = _.get(response_json, 'data.createLocation')",
+									"pm.test(\"Create Location success\", function() {",
+									"    pm.expect(create_location_result.success).to.be.true;",
+									"})",
+									"",
+									"const location = _.get(response_json, 'data.createLocation.location')",
+									"",
+									"pm.test(\"Location details\", function() {",
+									"    pm.expect(location.id).to.be.a('string');",
+									"    pm.expect(location.name).to.equal(pm.variables.get(\"location_name\"))",
+									"    pm.expect(location.phone).to.equal(pm.variables.get(\"phone_no\"))",
+									"    pm.expect(location.storeId).to.equal(pm.variables.get(\"store_id\"))",
+									"    ",
+									"})",
+									"",
+									"",
+									"",
+									"const expectedBusinessHours = JSON.parse(pm.variables.get(\"business_hours\"));",
+									"",
+									"function normalizeTime(time) {",
+									"    return time.toLowerCase().replace(/\\s+/g, '');",
+									"}",
+									"",
+									"pm.test(\"Business hours are correct\", function () {",
+									"    const responseBusinessHours = pm.response.json().data.createLocation.location.businessHours; ",
+									"",
+									"    const sortedExpectedBusinessHours = expectedBusinessHours.sort((a, b) => a.day.localeCompare(b.day));",
+									"    const sortedResponseBusinessHours = responseBusinessHours.sort((a, b) => a.day.localeCompare(b.day));",
+									"",
+									"    pm.expect(sortedResponseBusinessHours.length).to.equal(sortedExpectedBusinessHours.length);",
+									"",
+									"",
+									"    for (let i = 0; i < sortedExpectedBusinessHours.length; i++) {",
+									"        pm.expect(sortedResponseBusinessHours[i].day).to.equal(sortedExpectedBusinessHours[i].day);",
+									"        pm.expect(sortedResponseBusinessHours[i].type).to.equal(sortedExpectedBusinessHours[i].type);",
+									"",
+									"        if (sortedExpectedBusinessHours[i].slots) {",
+									"            pm.expect(sortedResponseBusinessHours[i].slots.length).to.equal(sortedExpectedBusinessHours[i].slots.length);",
+									"            for (let j = 0; j < sortedExpectedBusinessHours[i].slots.length; j++) {",
+									"                ",
+									"                const expectedStart = normalizeTime(sortedExpectedBusinessHours[i].slots[j].start);",
+									"                const expectedEnd = normalizeTime(sortedExpectedBusinessHours[i].slots[j].end);",
+									"                const responseStart = normalizeTime(sortedResponseBusinessHours[i].slots[j].start);",
+									"                const responseEnd = normalizeTime(sortedResponseBusinessHours[i].slots[j].end);",
+									"                ",
+									"                pm.expect(responseStart).to.equal(expectedStart);",
+									"                pm.expect(responseEnd).to.equal(expectedEnd);",
+									"            }",
+									"        } else {",
+									"            pm.expect(sortedResponseBusinessHours[i].slots).to.be.null;",
+									"        }",
+									"    }",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"location\", location);",
+									"",
+									"",
+									"const requestBody = {",
+									"      \"tenure\": \"Monthly\",",
+									"      \"street\": \"123 Jump Street\",",
+									"      \"city\": \"New York\",",
+									"      \"postalCode\": \"60605\",",
+									"      \"countryIso\": \"US\",",
+									"      \"stateIso\": \"NY\",",
+									"      \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. This is a sample description which is used to complete the 200 characters. Let us believe this has exceeded the character limit otherwise it is going to be a headache to go and change it again. But still to be on the careful side, I am adding a few more line of characters because of which this is going to work.\",",
+									"      \"ownerName\": \"John Doe\",",
+									"      \"yearOfIncorporation\": 1179,",
+									"      \"subCategoryId\": 20,",
+									"      \"additionalCategoryIds\": [\"609\"],",
+									"      \"folderName\": \"hello12341\",",
+									"      \"tags\":[\"pk\"],",
+									"      \"additionalPhones\": [\"{{phone_no}}\"],",
+									"      \"bizUrl\": \"www.easports222.com\",",
+									"      \"facebookUrl\": \"https://www.facebook.com/journeywithanthony/\",",
+									"      \"googleAdsPhone\": \"8289989989\",",
+									"      \"hideAddress\": false,",
+									"      \"instagramUrl\": \"https://www.instagram.com/rajinikanth/\",",
+									"      \"linkedinUrl\": \"https://www.linkedin.com/company/synup/\",",
+									"      \"paymentMethods\": [\"VISA\", \"CHEQUE\", \"MASTERCARD\", \"AMEX\", \"CASH\", \"CRYPTO\", \"DINERS_CLUB\", \"DISCOVER\", \"APPLE_PAY\",\"SAMSUNG_PAY\",\"PAYPAL\",\"ANDROID_PAY\",\"INVOICE\",\"TRAVELERS_CHECK\",\"FINANCING\"],",
+									"      \"pinterestUrl\": \"https://pinterest.com/cozylivin77/\",",
+									"      \"temporarilyClosed\": false,",
+									"      \"twitterUrl\": \"https://twitter.com/elonmusk\",",
+									"      \"tagline\": \"We Exist\",",
+									"      \"videos\":[\"https://www.youtube.com/watch?v=QKmrDUJFRkM\"]",
+									"",
+									"  ",
+									"};",
+									"",
+									"pm.test(\"Google Adsphone\", function () {",
+									"    pm.expect(location.googleAdsPhone).to.equal(requestBody.googleAdsPhone);",
+									"});",
+									"",
+									"pm.test(\"Tagline\", function () {",
+									"    pm.expect(location.tagline).to.equal(requestBody.tagline);",
+									"});",
+									"",
+									"pm.test(\"Twitter URL\", function () {",
+									"    pm.expect(location.twitterUrl).to.equal(requestBody.twitterUrl);",
+									"});",
+									"",
+									"pm.test(\"Facebook URL\", function () {",
+									"    pm.expect(location.facebookUrl).to.equal(requestBody.facebookUrl);",
+									"});",
+									"",
+									"pm.test(\"Pinterest URL\", function () {",
+									"    pm.expect(location.pinterestUrl).to.equal(requestBody.pinterestUrl);",
+									"});",
+									"",
+									"pm.test(\"Linkedin URL\", function () {",
+									"    pm.expect(location.linkedinUrl).to.equal(requestBody.linkedinUrl);",
+									"});",
+									"",
+									"pm.test(\"Instagram URL\", function () {",
+									"    pm.expect(location.instagramUrl).to.equal(requestBody.instagramUrl);",
+									"});",
+									"",
+									"pm.test(\"Hide Address\", function () {",
+									"    pm.expect(location.hideAddress).to.equal(requestBody.hideAddress);",
+									"});",
+									"",
+									"pm.test(\"Temporarily Closed\", function () {",
+									"    pm.expect(location.temporarilyClosed).to.equal(requestBody.temporarilyClosed);",
+									"});",
+									"",
+									"pm.test(\"Street matches\", function () {",
+									"    pm.expect(location.street).to.equal(requestBody.street);",
+									"});",
+									"",
+									"pm.test(\"City matches\", function () {",
+									"    pm.expect(location.city).to.equal(requestBody.city);",
+									"});",
+									"",
+									"pm.test(\"PostalCode matches\", function () {",
+									"    pm.expect(location.postalCode).to.equal(requestBody.postalCode);",
+									"});",
+									"",
+									"pm.test(\"CountryIso matches\", function () {",
+									"    pm.expect(location.countryIso).to.equal(requestBody.countryIso);",
+									"});",
+									"",
+									"pm.test(\"StateIso matches\", function () {",
+									"    pm.expect(location.stateIso).to.equal(requestBody.stateIso);",
+									"});",
+									"",
+									"pm.test(\"Description matches\", function () {",
+									"    pm.expect(location.description).to.equal(requestBody.description);",
+									"});",
+									"",
+									"pm.test(\"Owner name matches\", function () {",
+									"    pm.expect(location.ownerName).to.equal(requestBody.ownerName);",
+									"});",
+									"",
+									"pm.test(\"Subcategory ID matches\", function () {",
+									"    pm.expect(location.subCategoryId).to.equal(requestBody.subCategoryId);",
+									"});",
+									"",
+									"pm.test(\"Additional Category IDs match\", function () {",
+									"    const requestCategoryIds = requestBody.additionalCategoryIds.map(id => String(id));",
+									"    const responseCategoryIds = location.additionalCategoryIds.map(id => String(id));",
+									"    pm.expect(responseCategoryIds).to.eql(requestCategoryIds);",
+									"});",
+									"",
+									"pm.test(\"Folder Name matches\", function () {",
+									"    pm.expect(location.folderName).to.equal(requestBody.folderName);",
+									"});",
+									"",
+									"pm.test(\"Tags match\", function () {",
+									"    const requestTags = requestBody.tags;",
+									"    const responseTags = location.tags;",
+									"",
+									"    requestTags.forEach(tag => {",
+									"        pm.expect(responseTags).to.include(tag);",
+									"    });",
+									"",
+									"});",
+									"",
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.data.createLocation.errors).to.be.null;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Create Location success\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.data.createLocation.success).to.be.true;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Data object exists and is not empty\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.data).to.exist.and.to.not.be.empty;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Additional Phone is present and matches the expected phone number\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.data.createLocation.location.additionalPhones).to.be.an('array').that.is.not.empty;",
+									"    responseData.data.createLocation.location.additionalPhones.forEach(function(phone) {",
+									"        pm.expect(phone).to.match(/^\\d{10}$/);",
+									"    });",
+									"});",
+									"",
+									"pm.test(\"Videos array matches the expected value\", function () {",
+									"    const expectedVideos = requestBody.videos;",
+									"    pm.expect(location.videos).to.eql(expectedVideos);",
+									"});",
+									"",
+									"pm.test(\"Year of incorporation matches\", function () {",
+									"    pm.expect(location.yearOfIncorporation).to.equal(requestBody.yearOfIncorporation);",
+									"});",
+									"",
+									"pm.test(\"Business hours array is present and contains expected number of elements\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.have.property('data');",
+									"    pm.expect(responseData.data).to.have.property('createLocation');",
+									"    pm.expect(responseData.data.createLocation).to.have.property('location');",
+									"    pm.expect(responseData.data.createLocation.location).to.have.property('businessHours').that.is.an('array');",
+									"    pm.expect(responseData.data.createLocation.location.businessHours).to.have.lengthOf(7);",
+									"});",
+									"",
+									"",
+									"/*pm.test(\"Validate businessHours array for valid slots and types for each day\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.data.createLocation.location.businessHours).to.be.an('array');",
+									"    ",
+									"    responseData.data.createLocation.location.businessHours.forEach(function(day) {",
+									"        pm.expect(day).to.have.property('day').that.is.a('string');",
+									"        pm.expect(day).to.have.property('slots').that.is.an('array').and.to.have.length.above(0);",
+									"        pm.expect(day).to.have.property('type').that.is.a('string');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Payment methods array contains all expected payment methods\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.data.createLocation.location.paymentMethods).to.be.an('array');",
+									"    pm.expect(responseData.data.createLocation.location.paymentMethods).to.include.members([\"cash\", \"credit card\", \"debit card\", \"mobile payment\"]);",
+									"}); */",
+									"",
+									"",
+									"pm.test(\"Additional phones array is present and has expected number of elements\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData.data.createLocation.location.additionalPhones).to.be.an('array');",
+									"    pm.expect(responseData.data.createLocation.location.additionalPhones).to.have.lengthOf(1);",
+									"});",
+									"",
+									"",
+									"// validates that location has all these fields",
+									"",
+									"pm.test(\"Location has property accountId\", function () {",
+									"    pm.expect(location).to.have.property('accountId');",
+									"});",
+									"",
+									"pm.test(\"Location has property additionalCategoryIds\", function () {",
+									"    pm.expect(location).to.have.property('additionalCategoryIds');",
+									"});",
+									"",
+									"pm.test(\"Location has property additionalInfo\", function () {",
+									"    pm.expect(location).to.have.property('additionalInfo');",
+									"});",
+									"",
+									"pm.test(\"Location has property additionalPhones\", function () {",
+									"    pm.expect(location).to.have.property('additionalPhones');",
+									"});",
+									"",
+									"pm.test(\"Location has property archived\", function () {",
+									"    pm.expect(location).to.have.property('archived');",
+									"});",
+									"",
+									"pm.test(\"Location has property billingPeriod\", function () {",
+									"    pm.expect(location).to.have.property('billingPeriod');",
+									"});",
+									"",
+									"pm.test(\"Location has property bizUrl\", function () {",
+									"    pm.expect(location).to.have.property('bizUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property bookingUrl\", function () {",
+									"    pm.expect(location).to.have.property('bookingUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property businessHours\", function () {",
+									"    pm.expect(location).to.have.property('businessHours');",
+									"});",
+									"",
+									"pm.test(\"Location has property categoryId\", function () {",
+									"    pm.expect(location).to.have.property('categoryId');",
+									"});",
+									"",
+									"pm.test(\"Location has property city\", function () {",
+									"    pm.expect(location).to.have.property('city');",
+									"});",
+									"",
+									"pm.test(\"Location has property countryIso\", function () {",
+									"    pm.expect(location).to.have.property('countryIso');",
+									"});",
+									"",
+									"pm.test(\"Location has property customAttributes\", function () {",
+									"    pm.expect(location).to.have.property('customAttributes');",
+									"});",
+									"",
+									"pm.test(\"Location has property databaseId\", function () {",
+									"    pm.expect(location).to.have.property('databaseId');",
+									"});",
+									"",
+									"pm.test(\"Location has property description\", function () {",
+									"    pm.expect(location).to.have.property('description');",
+									"});",
+									"",
+									"pm.test(\"Location has property facebookUrl\", function () {",
+									"    pm.expect(location).to.have.property('facebookUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property folderId\", function () {",
+									"    pm.expect(location).to.have.property('folderId');",
+									"});",
+									"",
+									"pm.test(\"Location has property folderName\", function () {",
+									"    pm.expect(location).to.have.property('folderName');",
+									"});",
+									"",
+									"pm.test(\"Location has property googleAdsPhone\", function () {",
+									"    pm.expect(location).to.have.property('googleAdsPhone');",
+									"});",
+									"",
+									"pm.test(\"Location has property googleplusUrl\", function () {",
+									"    pm.expect(location).to.have.property('googleplusUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property hideAddress\", function () {",
+									"    pm.expect(location).to.have.property('hideAddress');",
+									"});",
+									"",
+									"pm.test(\"Location has property id\", function () {",
+									"    pm.expect(location).to.have.property('id');",
+									"});",
+									"",
+									"pm.test(\"Location has property instagramUrl\", function () {",
+									"    pm.expect(location).to.have.property('instagramUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property isRestaurant\", function () {",
+									"    pm.expect(location).to.have.property('isRestaurant');",
+									"});",
+									"",
+									"pm.test(\"Location has property latitude\", function () {",
+									"    pm.expect(location).to.have.property('latitude');",
+									"});",
+									"",
+									"pm.test(\"Location has property linkedinUrl\", function () {",
+									"    pm.expect(location).to.have.property('linkedinUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property locationPhotos\", function () {",
+									"    pm.expect(location).to.have.property('locationPhotos');",
+									"});",
+									"",
+									"pm.test(\"Location has property longitude\", function () {",
+									"    pm.expect(location).to.have.property('longitude');",
+									"});",
+									"",
+									"pm.test(\"Location has property moreHours\", function () {",
+									"    pm.expect(location).to.have.property('moreHours');",
+									"});",
+									"",
+									"pm.test(\"Location has property name\", function () {",
+									"    pm.expect(location).to.have.property('name');",
+									"});",
+									"",
+									"pm.test(\"Location has property offeringsUrl\", function () {",
+									"    pm.expect(location).to.have.property('offeringsUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property ownerEmail\", function () {",
+									"    pm.expect(location).to.have.property('ownerEmail');",
+									"});",
+									"",
+									"pm.test(\"Location has property ownerName\", function () {",
+									"    pm.expect(location).to.have.property('ownerName');",
+									"});",
+									"",
+									"pm.test(\"Location has property package\", function () {",
+									"    pm.expect(location).to.have.property('package');",
+									"});",
+									"",
+									"pm.test(\"Location has property paymentMethods\", function () {",
+									"    pm.expect(location).to.have.property('paymentMethods');",
+									"});",
+									"",
+									"pm.test(\"Location has property phone\", function () {",
+									"    pm.expect(location).to.have.property('phone');",
+									"});",
+									"",
+									"pm.test(\"Location has property pinterestUrl\", function () {",
+									"    pm.expect(location).to.have.property('pinterestUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property planId\", function () {",
+									"    pm.expect(location).to.have.property('planId');",
+									"});",
+									"",
+									"pm.test(\"Location has property planName\", function () {",
+									"    pm.expect(location).to.have.property('planName');",
+									"});",
+									"",
+									"pm.test(\"Location has property postalCode\", function () {",
+									"    pm.expect(location).to.have.property('postalCode');",
+									"});",
+									"",
+									"pm.test(\"Location has property publisherAttributes\", function () {",
+									"    pm.expect(location).to.have.property('publisherAttributes');",
+									"});",
+									"",
+									"pm.test(\"Location has property reservationUrl\", function () {",
+									"    pm.expect(location).to.have.property('reservationUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property serviceItems\", function () {",
+									"    pm.expect(location).to.have.property('serviceItems');",
+									"});",
+									"",
+									"pm.test(\"Location has property stateIso\", function () {",
+									"    pm.expect(location).to.have.property('stateIso');",
+									"});",
+									"",
+									"pm.test(\"Location has property storeId\", function () {",
+									"    pm.expect(location).to.have.property('storeId');",
+									"});",
+									"",
+									"pm.test(\"Location has property street\", function () {",
+									"    pm.expect(location).to.have.property('street');",
+									"});",
+									"",
+									"pm.test(\"Location has property street1\", function () {",
+									"    pm.expect(location).to.have.property('street1');",
+									"});",
+									"",
+									"pm.test(\"Location has property subCategory\", function () {",
+									"    pm.expect(location).to.have.property('subCategory');",
+									"});",
+									"",
+									"pm.test(\"Location has property subCategoryId\", function () {",
+									"    pm.expect(location).to.have.property('subCategoryId');",
+									"});",
+									"",
+									"pm.test(\"Location has property subCategoryName\", function () {",
+									"    pm.expect(location).to.have.property('subCategoryName');",
+									"});",
+									"",
+									"pm.test(\"Location has property tagline\", function () {",
+									"    pm.expect(location).to.have.property('tagline');",
+									"});",
+									"",
+									"pm.test(\"Location has property tags\", function () {",
+									"    pm.expect(location).to.have.property('tags');",
+									"});",
+									"",
+									"pm.test(\"Location has property temporarilyClosed\", function () {",
+									"    pm.expect(location).to.have.property('temporarilyClosed');",
+									"});",
+									"",
+									"pm.test(\"Location has property tiktokUrl\", function () {",
+									"    pm.expect(location).to.have.property('tiktokUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property toplineMessage\", function () {",
+									"    pm.expect(location).to.have.property('toplineMessage');",
+									"});",
+									"",
+									"pm.test(\"Location has property toplineMessageText\", function () {",
+									"    pm.expect(location).to.have.property('toplineMessageText');",
+									"});",
+									"",
+									"pm.test(\"Location has property twitterUrl\", function () {",
+									"    pm.expect(location).to.have.property('twitterUrl');",
+									"});",
+									"",
+									"pm.test(\"Location has property videos\", function () {",
+									"    pm.expect(location).to.have.property('videos');",
+									"});",
+									"",
+									"pm.test(\"Location has property yearOfIncorporation\", function () {",
+									"    pm.expect(location).to.have.property('yearOfIncorporation');",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input\": {\n      \"tenure\": \"Monthly\",\n      \"name\": \"{{location_name}}\",\n      \"storeId\": \"{{store_id}}\",\n      \"street\": \"123 Jump Street\",\n      \"city\": \"New York\",\n      \"postalCode\": \"60605\",\n      \"countryIso\": \"US\",\n      \"stateIso\": \"NY\",\n      \"phone\": \"{{phone_no}}\",\n      \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. This is a sample description which is used to complete the 200 characters. Let us believe this has exceeded the character limit otherwise it is going to be a headache to go and change it again. But still to be on the careful side, I am adding a few more line of characters because of which this is going to work.\",\n      \"ownerEmail\": \"{{owner_email}}\",\n      \"ownerName\": \"John Doe\",\n      \"yearOfIncorporation\": \"1179\",\n      \"subCategoryId\": 20,\n      \"businessHours\": {{business_hours}},\n      \"additionalCategoryIds\": [\"609\"],\n      \"folderName\": \"HELLO12341\",\n      \"tags\":[\"pk\"],\n      \"additionalPhones\": [\"{{phone_no}}\"],\n      \"bizUrl\": \"www.easports222.com\",\n      \"facebookUrl\": \"https://www.facebook.com/journeywithanthony/\",\n      \"googleAdsPhone\": \"8289989989\",\n      \"hideAddress\": false,\n      \"instagramUrl\": \"https://www.instagram.com/rajinikanth/\",\n      \"linkedinUrl\": \"https://www.linkedin.com/company/synup/\",\n      \"paymentMethods\": [\"VISA\", \"CHEQUE\", \"MASTERCARD\", \"AMEX\", \"CASH\", \"CRYPTO\", \"DINERS_CLUB\", \"DISCOVER\", \"APPLE_PAY\",\"SAMSUNG_PAY\",\"PAYPAL\",\"ANDROID_PAY\",\"INVOICE\",\"TRAVELERS_CHECK\",\"FINANCING\"],\n      \"pinterestUrl\": \"https://pinterest.com/cozylivin77/\",\n      \"temporarilyClosed\": false,\n      \"twitterUrl\": \"https://twitter.com/elonmusk\",\n      \"tagline\": \"We Exist\",\n      \"videos\":[\"https://www.youtube.com/watch?v=QKmrDUJFRkM\"]\n\n  }\n}"
+						},
+						"url": {
+							"raw": "{{location_end_point}}",
+							"host": [
+								"{{location_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "locations by ids",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let query_params = `/locations-by-ids?ids=[\"${pm.collectionVariables.get(\"location\").id}\"]`;",
+									"",
+									"pm.variables.set(\"query_params\", query_params);",
+									"pm.variables.get(\"varibale_name\");",
+									"console.log(pm.variables.get(\"query_params\"))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const location_details = _.get(response_json, \"data.getLocationsByIds[0]\");",
+									"console.log(location_details);",
+									"console.log(pm.collectionVariables.get(\"location\"))",
+									"",
+									"//Test case not easy to complete since both the stored object and returned location object have different keys",
+									"pm.test(\"Locations details displayed successfully\", function(){",
+									"    pm.expect(checkLocationInfo(pm.collectionVariables.get(\"location\"), location_details)).to.be.true;",
+									"});",
+									"",
+									"//checks if the created location id details and query result has the same values for the object keys",
+									"function checkLocationInfo(locationA, locationB) {",
+									"    for (let key in locationA) {",
+									"        console.log(key)",
+									"        console.log(locationA[key], locationB[key])",
+									"        if (key in locationB) {",
+									"            if (!(_.isEqual(locationA[key], locationB[key]))) {",
+									"                return false;",
+									"            }",
+									"        }",
+									"    }",
+									"    return true;",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}{{query_params}}",
+							"host": [
+								"{{v4_end_point}}{{query_params}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search location with keyword",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const keyword = (pm.collectionVariables.get(\"location\").name).substring(0,3)",
+									"",
+									"let query_params = `/search?query=\"${keyword}\"`;",
+									"",
+									"pm.variables.set(\"query_params\", query_params);",
+									"pm.variables.set(\"keyword\", keyword)",
+									"",
+									"console.log(pm.variables.get(\"query_params\"))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const search_locations = _.get(response_json, \"data.searchLocations.edges\")",
+									"const location_names = search_locations.map(location => location.node.name)",
+									"console.log(location_names);",
+									"",
+									"pm.test(\"Locations returned are having the keyword?\", function(){",
+									"    pm.expect(location_names.every(name => name.includes(pm.variables.get(\"keyword\")))).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{location_end_point}}{{query_params}}",
+							"host": [
+								"{{location_end_point}}{{query_params}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Locations with cursor",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let queryParams = '';",
+									"let location_id = pm.collectionVariables.get('location').id;",
+									"const locationPagination = {",
+									"    first : 2,",
+									"    after : location_id",
+									"}",
+									"pm.variables.set(\"locationPagination\", JSON.stringify(locationPagination));",
+									"",
+									"queryParams = '?' + Object.keys(locationPagination).map(key => `${key}=${locationPagination[key]}`).join('&');",
+									"pm.variables.set(\"query_params\", queryParams)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    var cursor = _.get(response_json, 'data.allLocations.edges[0].cursor');",
+									"    pm.response.to.not.be.error;",
+									"    console.log(cursor);",
+									"})",
+									"",
+									"pm.test(\"Locations are returned\", function() {",
+									"    pm.expect(response_json.data.allLocations).to.have.property('edges');",
+									"    pm.expect(response_json.data.allLocations).to.have.property('pageInfo');",
+									"})",
+									"",
+									"//This checks if the no of locations returned is as per the query params",
+									"const locationCount = _.get(response_json, \"data.allLocations.edges\").length",
+									"const locationsQueriedCount = JSON.parse(pm.variables.get(\"locationPagination\")).first",
+									"pm.test(\"Count of locations returned is correct\", function() {",
+									"    pm.expect(locationCount).to.equal(locationsQueriedCount)",
+									"})",
+									"",
+									"//Test to check the ordering of the location ids returned ",
+									"pm.test(\"Order of the location ids returned\", function() {",
+									"    pm.expect(checkLocationIdOrder(response_json.data.allLocations.edges))",
+									"})",
+									"",
+									"function checkLocationIdOrder(result, orderedList = pm.collectionVariables.get(\"orderedLocationIdList\")) {",
+									"    let index = orderedList.indexOf(pm.collectionVariables.get(\"location\").id);",
+									"    for (let i=index+1; i<=index+locationsQueriedCount; i++) {",
+									"        if (orderedList[i]!= result[i].cursor) {",
+									"            return false;",
+									"        }",
+									"    }",
+									"    return true;",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{location_end_point}}{{query_params}}",
+							"host": [
+								"{{location_end_point}}{{query_params}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Photos to Location",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"location_photo_type\", \"ADDITIONAL\");",
+									"pm.variables.set(\"starred\", true)",
+									"let photos = [",
+									"    {",
+									"    photo: pm.collectionVariables.get(\"jpeg_image\"),",
+									"    type: `${pm.variables.get(\"location_photo_type\")}`,",
+									"    starred: pm.variables.get(\"starred\")",
+									"    }, ",
+									"    {",
+									"    photo: pm.collectionVariables.get(\"jpeg_image\"),",
+									"    type: `${pm.variables.get(\"location_photo_type\")}`,",
+									"    starred: pm.variables.get(\"starred\")",
+									"    },",
+									"    {",
+									"    photo: pm.collectionVariables.get(\"jpeg_image\"),",
+									"    type: `${pm.variables.get(\"location_photo_type\")}`,",
+									"    starred: pm.variables.get(\"starred\")",
+									"    },",
+									"    {",
+									"    photo: pm.collectionVariables.get(\"jpeg_image\"),",
+									"    type: `${pm.variables.get(\"location_photo_type\")}`,",
+									"    starred: false",
+									"    },",
+									"    {",
+									"    photo: pm.collectionVariables.get(\"png_image\"),",
+									"    type: \"ADDITIONAL\",",
+									"    starred: false",
+									"    }",
+									"]",
+									"",
+									"pm.variables.set(\"photos\", JSON.stringify(photos))",
+									"pm.variables.set(\"location_id\", pm.collectionVariables.get(\"location\").id)",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const add_location_photos_result = _.get(response_json, 'data.addLocationPhotos')",
+									"pm.test(\"Add Location Photos success\", function() {",
+									"    pm.expect(add_location_photos_result.success).to.be.true;",
+									"})",
+									"",
+									"const photos = _.get(response_json, 'data.addLocationPhotos.photos')",
+									"const input_photos = pm.variables.get(\"photos\")",
+									"pm.test(\" Location Photo upload details\", function(){",
+									"    for (let i=0; i<input_photos; i++) {",
+									"        pm.expect(photos[i].starred).to.equal(input_photos[i].starred);",
+									"        pm.expect(photos[i].type).to.equal(input_photos[i].type);",
+									"        pm.expect(photos[i]).to.have.property('thumbnailUrl');",
+									"        pm.expect(photos[i]).to.have.property('id');",
+									"        pm.expect(photos[i]).to.have.property('name');",
+									"        pm.expect(photos[i]).to.have.property('url');",
+									"        pm.expect(photos[i].name).to.be.a('string');",
+									"        pm.expect(photos[i].url).to.be.a('string');",
+									"        pm.expect(photos[i].id).to.be.a('string');",
+									"    }",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"location_photos\", photos)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input\": {\n    \"locationId\": \"TG9jYXRpb246MjA4MTU=\",\n    \"photos\": {{photos}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{photos_end_point}}",
+							"host": [
+								"{{photos_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Star/Un Star Photos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\": {\n    \"locationId\": \"TG9jYXRpb246MjA4MTU=\",\n    \"mediaIds\": [\"TWVkaWFGaWxlOjIwMjMx\"],\n    \"starred\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{photos_end_point}}/star",
+							"host": [
+								"{{photos_end_point}}"
+							],
+							"path": [
+								"star"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Photos from location",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"location_id\", pm.collectionVariables.get(\"location\").id)",
+									"",
+									"pm.variables.set(\"photoIds\", JSON.stringify(pm.collectionVariables.get(\"location_photos\").map(value=> {",
+									"    return value.id",
+									"})))",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const remove_location_photos_result = _.get(response_json, 'data.removeLocationPhotos')",
+									"pm.test(\"Remove Location Photos success\", function() {",
+									"    pm.expect(remove_location_photos_result.success).to.be.true;",
+									"})",
+									"",
+									"const photos = _.get(response_json, 'data.removeLocationPhotos.photos')",
+									"const existing_photo_list = pm.collectionVariables.get(\"location_photos\")",
+									"pm.test(\"Remove Location photo details\", function(){",
+									"    for (let i=0; i<existing_photo_list.length; i++) {",
+									"        console.log(photos[i].id, existing_photo_list[i].id);",
+									"        console.log(photos[i].starred, existing_photo_list[i].starred);",
+									"        pm.expect(photos[i].starred).to.equal(existing_photo_list[i].starred);",
+									"        pm.expect(photos[i].type).to.equal(existing_photo_list[i].type);",
+									"        pm.expect(photos[i]).to.have.property('thumbnailUrl');",
+									"        pm.expect(photos[i]).to.have.property('id');",
+									"        pm.expect(photos[i]).to.have.property('name');",
+									"        pm.expect(photos[i]).to.have.property('url');",
+									"        pm.expect(photos[i].name).to.be.a('string');",
+									"        pm.expect(photos[i].url).to.be.a('string');",
+									"        pm.expect(photos[i].id).to.be.a('string');",
+									"    }",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input\": {\n    \"locationId\": \"{{location_id}}\",\n    \"photoIds\": {{photoIds}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{remove_photos_end_point}}",
+							"host": [
+								"{{remove_photos_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Location",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//pm.variables.set(\"location_id\", pm.collectionVariables.get(\"location\").id)",
+									"//pm.variables.set(\"location_name\", pm.collectionVariables.get(\"location\").name + \"edited\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const update_location_result = _.get(response_json, 'data.updateLocation')",
+									"pm.test(\"Update Location success\", function() {",
+									"    pm.expect(update_location_result.success).to.be.true;",
+									"})",
+									"",
+									"const location = _.get(response_json, 'data.updateLocation.location')",
+									"pm.test(\"Location details\", function() {",
+									"    pm.expect(location.id).to.equal(pm.variables.get(\"location_id\"))",
+									"    pm.expect(location.name).to.equal(pm.variables.get(\"location_name\"))",
+									"    pm.expect(location.phone).to.equal(pm.collectionVariables.get(\"location\").phone)",
+									"    pm.expect(location.storeId).to.equal(pm.collectionVariables.get(\"location\").storeId)",
+									"})",
+									"pm.collectionVariables.set(\"location\", location)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\": {\n    \"id\": \"TG9jYXRpb246MTM5Mjc=\",\n    \"tags\": [\"newtag1\"],\n    \"name\":\"New\",\n    \"additionalCategoryIds\":[\"642\"],\n    \"videos\": [],\n    \"businessHours\": [{\"day\":\"MONDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"CLOSED\"},\n    {\"day\":\"SATURDAY\", \"slots\":[{\"start\":\"09:00 AM\",\"end\":\"05:00 PM\"}],\"specialDate\":null,\"type\":\"OPEN\"},\n    {\"day\":\"TUESDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"OPEN_24x7\"},\n    {\"day\":\"THURSDAY\", \"slots\":[{\"start\":\"09:00 AM\",\"end\":\"01:00 PM\"},{\"start\":\"02:00 PM\",\"end\":\"05:00 PM\"}],\"specialDate\":null,\"type\":\"OPEN\"},\n    {\"day\":\"FRIDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"CLOSED\"},\n    {\"day\":\"WEDNESDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"OPEN_24x7\"},\n    {\"day\":\"SUNDAY\",\"slots\":null,\"specialDate\":null,\"type\":\"CLOSED\"},\n    {\"day\": \"SPECIAL\", \"slots\": null, \"specialDate\": \"2020-12-04\", \"type\": \"OPEN_24x7\"},\n    {\"day\": \"SPECIAL\", \"slots\": [{\"start\": \"09:00 AM\", \"end\": \"01:00 PM\"}, {\"start\": \"02:00 PM\", \"end\": \"05:00 PM\"}], \"specialDate\": \"2021-02-03\", \"type\": \"OPEN\"}]\n  }\n}\n\n"
+						},
+						"url": {
+							"raw": "{{update_end_point}}",
+							"host": [
+								"{{update_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate Locations",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"const activate_location_result = _.get(response_json, 'data.activateLocations.result')",
+									"",
+									"pm.test(\"Activate Location success for all location ids provided\", function() {",
+									"    for (location of activate_location_result) {",
+									"        pm.expect(JSON.parse(pm.collectionVariables.get(\"location_ids\"))).to.include(location.locationId)",
+									"        pm.expect(location.success).to.be.true;",
+									"    }",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input\": {\n    \"locationIds\": {{location_ids}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{activate_end_point}}",
+							"host": [
+								"{{activate_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add locations to folder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"folder_name\", pm.variables.replaceIn('{{$randomWord}}').toLowerCase())",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"let add_locations_to_folder_result = response_json.data.addLocationsToFolder;",
+									"",
+									"pm.test(\"Add Locations to folder success\", function() {",
+									"    pm.expect(add_locations_to_folder_result.success).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Folder name check\", function() {",
+									"    pm.expect(add_locations_to_folder_result.folder.name).to.equal(pm.collectionVariables.get('folder_name'))",
+									"})",
+									"",
+									"pm.test(\"Folder details test\", function() {",
+									"    pm.expect(add_locations_to_folder_result.folder.archived).to.be.false;",
+									"    pm.expect(add_locations_to_folder_result.folder.root).to.be.false;",
+									"})",
+									"",
+									"pm.test(\"Folder location count\", function() {",
+									"    pm.expect(JSON.parse(pm.collectionVariables.get('location_ids')).length).to.equal(add_locations_to_folder_result.folder.locationCount)",
+									"})",
+									"",
+									"pm.collectionVariables.set(\"folder\", add_locations_to_folder_result.folder)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n   \"input\":{  \n      \"name\":\"{{folder_name}}\",\n      \"locationIds\":{{location_ids}}\n   }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{folder_end_point}}",
+							"host": [
+								"{{folder_end_point}}"
+							]
+						},
+						"description": "Add locations to folder"
+					},
+					"response": []
+				},
+				{
+					"name": "Archive locations",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let location_ids_array = pm.collectionVariables.get(\"orderedLocationIdList\").slice(0,2)",
+									"pm.collectionVariables.set(\"location_ids\", JSON.stringify(location_ids_array))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const location_ids = pm.collectionVariables.get(\"location_ids\")",
+									"const archive_location_result = _.get(response_json, 'data.archiveLocations.result')",
+									"pm.test(\"Archive Location success for all location ids provided\", function() {",
+									"    for (location of archive_location_result) {",
+									"        pm.expect(JSON.parse(pm.collectionVariables.get(\"location_ids\"))).to.include(location.locationId)",
+									"        pm.expect(location.success).to.be.true;",
+									"    }",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input\": {\n    \"locationIds\": {{location_ids}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{archive_end_point}}",
+							"host": [
+								"{{archive_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Locations by storeCodes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2 seconds\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"pm.test(\"Response contains 'data' field\", function () {",
+									"    pm.response.to.have.jsonBody('data');",
+									"});",
+									"",
+									"pm.test(\"Response contains 'getLocationsByStoreCodes' array\", function () {",
+									"    pm.response.to.have.jsonBody('data.getLocationsByStoreCodes');",
+									"    pm.expect(pm.response.json().data.getLocationsByStoreCodes).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Handle empty 'getLocationsByStoreCodes' array\", function () {",
+									"    const locations = pm.response.json().data.getLocationsByStoreCodes;",
+									"    if (locations.length === 0) {",
+									"        pm.expect(locations).to.be.an('array').that.is.empty;",
+									"    } else {",
+									"        // Check for fields",
+									"        pm.expect(locations).to.be.an('array').that.is.not.empty;",
+									"        pm.expect(locations[0]).to.have.property('name');",
+									"        pm.expect(locations[0]).to.have.property('city');",
+									"        pm.expect(locations[0]).to.have.property('street');",
+									"        pm.expect(locations[0]).to.have.property('postalCode');",
+									"        pm.expect(locations[0]).to.have.property('phone');",
+									"        pm.expect(locations[0]).to.have.property('description');",
+									"        pm.expect(locations[0]).to.have.property('id');",
+									"        pm.expect(locations[0]).to.have.property('subCategoryId');",
+									"        pm.expect(locations[0]).to.have.property('storeId');",
+									"",
+									"        pm.test(\"Verify 'approved' status of the first location\", function () {",
+									"            const firstLocation = locations[0];",
+									"            pm.expect(firstLocation.approved).to.be.oneOf(['APPROVED', 'PENDING']);",
+									"        });",
+									"",
+									"        pm.test(\"Verify 'customAttributes' field for each location\", function () {",
+									"            locations.forEach(location => {",
+									"                pm.expect(location.customAttributes).to.be.an('array');",
+									"            });",
+									"        });",
+									"",
+									"        pm.test(\"Check if 'tags' array is present and non-empty in the first location\", function () {",
+									"            const firstLocation = locations[0];",
+									"            pm.expect(firstLocation.tags).to.be.an('array').that.is.not.empty;",
+									"        });",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations-by-store-codes?storeCodes=[\"shop_code_benji\",\"Test00001\"]",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations-by-store-codes"
+							],
+							"query": [
+								{
+									"key": "storeCodes",
+									"value": "[\"shop_code_benji\",\"Test00001\"]"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Locations in Bulk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\":{\n    \"csvUrl\": \"https://cdn.filestackcontent.com/4RQkAYPETzG1cMjO87gl\",\n    \"filename\":\"1736c787e592217e97ad9e872a82eb57.csv\"\n}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{location_end_point}}/bulk-upload",
+							"host": [
+								"{{location_end_point}}"
+							],
+							"path": [
+								"bulk-upload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Listings",
+			"item": [
+				{
+					"name": "Get Premium listings for a location",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set dynamic environment variables",
+									"pm.environment.set(\"location_id\",\"{{$location_id}}\");",
+									"",
+									"",
+									"// Log the variables to the console for debugging",
+									"console.log(\"Location ID: \" + pm.environment.get(\"{{$location_id}}\"));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the response body",
+									"let response = pm.response.json();",
+									"",
+									"// Check if data and listingsForLocation exist",
+									"if (response && response.data && Array.isArray(response.data.listingsForLocation)) {",
+									"    let listings = response.data.listingsForLocation;",
+									"    ",
+									"    // Loop through each listing to check conditions",
+									"    listings.forEach(listing => {",
+									"        if (listing.actionRequired || listing.syncStatus === \"REQUIRING_ACTION\") {",
+									"            console.log(\"Listing requires attention:\");",
+									"            console.log(\"Site: \" + listing.site.name);",
+									"            console.log(\"Sync Status: \" + listing.syncStatus);",
+									"            console.log(\"Display Status: \" + listing.displayStatus);",
+									"            console.log(\"Last Update: \" + listing.lastUpdate);",
+									"            console.log(\"Listing URL: \" + (listing.listingUrl ? listing.listingUrl : \"N/A\"));",
+									"            console.log(\"-----\");",
+									"        }",
+									"    });",
+									"} else {",
+									"    console.log(\"No listings found or invalid response format.\");",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations/{{location_id}}/listings/premium",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"{{location_id}}",
+								"listings",
+								"premium"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get duplicate listings for location",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Set dynamic environment variables",
+									"pm.environment.set(\"location_id\",\"{{$location_id}}\");",
+									"",
+									"",
+									"// Log the variables to the console for debugging",
+									"console.log(\"Location ID: \" + pm.environment.get(\"{{$location_id}}\"));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations/{{location_id}}/listings/duplicates",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"{{location_id}}",
+								"listings",
+								"duplicates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate Listings Rollup",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations/listings/duplicates",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"listings",
+								"duplicates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark as duplicate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\": {\n                \"locationId\": \"TG9jYXRpb246NzM1Mzc=\",\n                \"listingItemIds\": [\"TGlzdGluZ0l0ZW06MzMzMjkyOQ==\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{v4_end_point}}/locations/listings/mark-as-duplicate",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"listings",
+								"mark-as-duplicate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark as not duplicate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\": {\n        \"listingItemIds\": [\"TGlzdGluZ0l0ZW06MzMzMjkzOA==\"],\n        \"locationId\": \"TG9jYXRpb246NzM1Mzc=\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{v4_end_point}}/locations/listings/mark-as-not-duplicate",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"listings",
+								"mark-as-not-duplicate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Listings Copy",
+			"item": [
+				{
+					"name": "Get Premium listings for a location",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set dynamic environment variables",
+									"pm.environment.set(\"location_id\",\"{{$location_id}}\");",
+									"",
+									"",
+									"// Log the variables to the console for debugging",
+									"console.log(\"Location ID: \" + pm.environment.get(\"{{$location_id}}\"));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the response body",
+									"let response = pm.response.json();",
+									"",
+									"// Check if data and listingsForLocation exist",
+									"if (response && response.data && Array.isArray(response.data.listingsForLocation)) {",
+									"    let listings = response.data.listingsForLocation;",
+									"    ",
+									"    // Loop through each listing to check conditions",
+									"    listings.forEach(listing => {",
+									"        if (listing.actionRequired || listing.syncStatus === \"REQUIRING_ACTION\") {",
+									"            console.log(\"Listing requires attention:\");",
+									"            console.log(\"Site: \" + listing.site.name);",
+									"            console.log(\"Sync Status: \" + listing.syncStatus);",
+									"            console.log(\"Display Status: \" + listing.displayStatus);",
+									"            console.log(\"Last Update: \" + listing.lastUpdate);",
+									"            console.log(\"Listing URL: \" + (listing.listingUrl ? listing.listingUrl : \"N/A\"));",
+									"            console.log(\"-----\");",
+									"        }",
+									"    });",
+									"} else {",
+									"    console.log(\"No listings found or invalid response format.\");",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations/{{location_id}}/listings/premium",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"{{location_id}}",
+								"listings",
+								"premium"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get duplicate listings for location",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations/TG9jYXRpb246NzM0NTE=/listings/duplicates?page=",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"TG9jYXRpb246NzM0NTE=",
+								"listings",
+								"duplicates"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate Listings Rollup",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}"
+							}
+						],
+						"url": {
+							"raw": "{{v4_end_point}}/locations/listings/duplicates",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"listings",
+								"duplicates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark as duplicate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\": {\n                \"locationId\": \"TG9jYXRpb246NzM1Mzc=\",\n                \"listingItemIds\": [\"TGlzdGluZ0l0ZW06MzMzMjkyOQ==\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{v4_end_point}}/locations/listings/mark-as-duplicate",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"listings",
+								"mark-as-duplicate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark as not duplicate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\": {\n        \"listingItemIds\": [\"TGlzdGluZ0l0ZW06MzMzMjkzOA==\"],\n        \"locationId\": \"TG9jYXRpb246NzM1Mzc=\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{v4_end_point}}/locations/listings/mark-as-not-duplicate",
+							"host": [
+								"{{v4_end_point}}"
+							],
+							"path": [
+								"locations",
+								"listings",
+								"mark-as-not-duplicate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Organizing locations",
+			"item": [
+				{
+					"name": "Create Folder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"folder_name\",\"automation_folder\" + \"_\" +String(Math.floor(Math.random()*10000)))",
+									"pm.collectionVariables.set(\"location_ids\", JSON.stringify(pm.collectionVariables.get(\"orderedLocationIdList\").slice(0,2)))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"const create_folder_result = _.get(response_json, 'data.createFolder');",
+									"pm.test(\"Create Folder success\", function() {",
+									"    pm.expect(create_folder_result.success).to.be.true;",
+									"})",
+									"",
+									"const folder = create_folder_result.folder;",
+									"",
+									"pm.test(\"Newly created Folder details\", function(){",
+									"    pm.expect(folder.id).to.be.a('string');",
+									"    pm.expect(folder.createdAt).to.not.be.a('null')",
+									"    pm.expect(folder.name).to.equal(pm.variables.get(\"folder_name\"))",
+									"    pm.expect(folder.archived).to.be.false",
+									"    pm.expect(folder.root).to.be.false",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"folder\", folder)",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"input\":{\n\t\t\"name\":\"{{folder_name}}\",\n\t\t\"locationIds\":{{location_ids}}\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{folders_end_point}}/create",
+							"host": [
+								"{{folders_end_point}}"
+							],
+							"path": [
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Locations from folder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"let delete_locations_from_folder_result = response_json.data.deleteLocationsFromFolder;",
+									"",
+									"pm.test(\"Remove Locations from folder success\", function() {",
+									"    pm.expect(delete_locations_from_folder_result.success).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Removed locations check\", function() {",
+									"    for (location of pm.collectionVariables.get(\"location_ids\")) {",
+									"        pm.expect(delete_locations_from_folder_result.locations).to.include(location)",
+									"    }",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"input\":{\n        \"locationIds\":{{location_ids}}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{remove_folder_end_point}}",
+							"host": [
+								"{{remove_folder_end_point}}"
+							]
+						},
+						"description": "remove locations from folder"
+					},
+					"response": []
+				},
+				{
+					"name": "Rename Folder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"folder_id\", pm.collectionVariables.get(\"folder\").id)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n   \"input\":{  \n      \"name\":\"New name\",\n      \"id\":[  \n         \"{{folder_id}}\"\n      ]\n   }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rename_folder_end_point}}",
+							"host": [
+								"{{rename_folder_end_point}}"
+							]
+						},
+						"description": "rename a folder"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete folder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n   \"input\":{  \n      \"name\":\"{{folder_name}}\"\n   }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{remove_folder_end_point}}",
+							"host": [
+								"{{remove_folder_end_point}}"
+							]
+						},
+						"description": "delete folder"
+					},
+					"response": []
+				},
+				{
+					"name": "Folder info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let folder_id = pm.variables.get(\"folder\").id",
+									"pm.variables.set(\"folder_id\", folder_id)",
+									"console.log(folder_id)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"const folder = _.get(response_json, 'data.getFolderDetails');",
+									"",
+									"pm.test(\"Folder details validation\", function () {",
+									"    pm.expect(folder.id).to.equal(pm.variables.get(\"folder\").id);",
+									"    pm.expect(folder.createdAt).to.equal(pm.variables.get(\"folder\").createdAt)",
+									"    pm.expect(folder.folderName).to.equal(pm.variables.get(\"folder\").name)",
+									"});",
+									"",
+									"let locations = folder.locations",
+									"pm.test(\"Check locations of the folder\", function() {",
+									"    for (location of locations) {",
+									"        pm.expect(pm.collectionVariables.get(\"location_ids\")).to.include(location.id)",
+									"    }",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{folders_end_point}}/{{folder_id}}/info",
+							"host": [
+								"{{folders_end_point}}"
+							],
+							"path": [
+								"{{folder_id}}",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Folder Tree",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"pm.test(\"Error in response\", function() {",
+									"    pm.expect(response_json.errors).to.equal(undefined);",
+									"})",
+									"",
+									"const folder_tree = _.get(response_json, 'data.getFolderTree');",
+									"",
+									"pm.test(\"Checking for newly created folder in folder tree\", function() {",
+									"    pm.expect(folderCheck(folder_tree).id).to.equal(pm.variables.get(\"folder\").id);",
+									"    pm.expect(folderCheck(folder_tree).name).to.equal(pm.variables.get(\"folder\").name);",
+									"    pm.expect(folderCheck(folder_tree).locationCount).to.equal(pm.variables.get(\"folder\").locationCount);",
+									"});",
+									"",
+									"//Recursive function to check if the newly created folder id is present in the folder tree",
+									"function folderCheck(folders) {",
+									"        let result = false;",
+									"        for (subFolder of folders) {",
+									"            if (subFolder.id == pm.variables.get(\"folder\").id) {",
+									"                return (result=subFolder);",
+									"            }",
+									"            if (subFolder.subFolders.length > 0){",
+									"                result = folderCheck(subFolder.subFolders);",
+									"            }   ",
+									"        }",
+									"        return result;",
+									"    }",
+									"",
+									"pm.collectionVariables.set(\"orderedFolderIdList\", getFolderIdList(response_json.data.getFolderTree[0].subFolders))",
+									"",
+									"console.log(getFolderIdList(response_json.data.getFolderTree[0].subFolders))",
+									"",
+									"function getFolderIdList(list) {",
+									"    return result = list.map(value => {",
+									"        return value.id;",
+									"    })",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{folders_end_point}}/tree",
+							"host": [
+								"{{folders_end_point}}"
+							],
+							"path": [
+								"tree"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Folder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"folderId\", pm.variables.get(\"folder\").id)",
+									"pm.variables.set(\"folderName\", \"renamed_automation_folder\" + String(Math.floor(Math.random()*10000)));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"const edit_folder_result = _.get(response_json, 'data.editFolderNodes');",
+									"pm.test(\"Create Folder success\", function() {",
+									"    pm.expect(edit_folder_result.success).to.be.true;",
+									"})",
+									"",
+									"const folder = edit_folder_result.folder;",
+									"",
+									"pm.test(\"Edited Folder details\", function(){",
+									"    pm.expect(folder.id).to.equal(pm.variables.get(\"folder\").id)",
+									"    pm.expect(folder.name).to.equal(pm.variables.get(\"folderName\"))",
+									"});",
+									"",
+									"let renamed_folder = pm.collectionVariables.get(\"folder\");",
+									"renamed_folder.name = pm.variables.get(\"folderName\")",
+									"pm.collectionVariables.set(\"folder\", JSON.stringify(renamed_folder))",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"input\":{\n\t\t\"folderId\":\"{{folderId}}\",\n\t\t\"folderName\":\"{{folderName}}\",\n\t\t\"locationIds\":[]\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{folders_end_point}}/edit",
+							"host": [
+								"{{folders_end_point}}"
+							],
+							"path": [
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Locations to tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"location_id\", pm.collectionVariables.get(\"orderedLocationIdList\").slice(0,1))",
+									"pm.collectionVariables.set(\"tag\", pm.variables.replaceIn('{{$randomWord}}').toLowerCase())"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"let add_tag_result = response.data.addTag;",
+									"",
+									"pm.test(\"Add tag to location success\", function() {",
+									"    pm.expect(add_tag_result.success).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Added tag details\", function() {",
+									"    pm.expect(add_tag_result.tag.name).to.equal(pm.collectionVariables.get(\"tag\"))",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input\":{\n    \"locationId\":\"{{location_id}}\",\n    \"tag\":\"{{tag}}\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tags_end_point}}",
+							"host": [
+								"{{tags_end_point}}"
+							]
+						},
+						"description": "adds a tag to the locations"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Locations from tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"let remove_tag_result = response.data.removeTag;",
+									"",
+									"pm.test(\"Remove tag from location success\", function() {",
+									"    pm.expect(remove_tag_result.success).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Remove tag details\", function() {",
+									"    pm.expect(remove_tag_result.tag.name).to.equal(pm.collectionVariables.get(\"tag\"))",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n   \"input\":{  \n      \"locationId\":\"{{location_id}}\",\n      \"tag\":\"{{tag}}\"\n   }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{remove_tags_end_point}}",
+							"host": [
+								"{{remove_tags_end_point}}"
+							]
+						},
+						"description": "removes the tag from the locations"
+					},
+					"response": []
+				},
+				{
+					"name": "Folder Edit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{f}}",
+							"host": [
+								"{{f}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "create user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"user_name\",\"pttqa1\" + \"+\" +String(Math.floor(Math.random()*10000)))",
+									"",
+									"pm.variables.set(\"user_email\",pm.variables.get(\"user_name\") +\"@gmail.com\")",
+									"console.log(pm.variables.get(\"user_email\"))",
+									"let role_id = JSON.parse(pm.collectionVariables.get(\"roles\"))[5].id",
+									"pm.variables.set(\"role_id\", role_id)",
+									"pm.variables.set(\"direct_customer\", true)",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"})",
+									"",
+									"const add_user_result = _.get(response_json, 'data.addUser')",
+									"pm.test(\"Add user success\", function() {",
+									"    pm.expect(add_user_result.success).to.be.true;",
+									"})",
+									"",
+									"const user = _.get(response_json, 'data.addUser.user')",
+									"delete user['accountId']",
+									"",
+									"console.log(pm.collectionVariables.get(\"user\"))",
+									"pm.test(\"User details\", function() {",
+									"    pm.expect(user.id).to.be.a('string');",
+									"    pm.expect(user.createdAt).to.not.be.a('null')",
+									"    pm.expect(user.directCustomer).to.equal(pm.variables.get(\"direct_customer\"))",
+									"    pm.expect(user.firstName).to.equal(pm.variables.get(\"user_name\"))",
+									"    pm.expect(user.inviteStatus).to.equal(\"INVITE_SENT\")",
+									"    pm.expect(user.customRole.id).to.equal(pm.variables.get(\"role_id\"))",
+									"})",
+									"",
+									"pm.collectionVariables.set(\"user\", user)",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\":{\n        \"email\":\"{{user_email}}\",\n        \"roleId\":\"{{role_id}}\",\n        \"firstName\":\"{{user_name}}\",\n        \"directCustomer\":{{direct_customer}}    \n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}/create",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"const users = _.get(response_json, 'data.users');",
+									"",
+									"pm.test(\"Total user count more than 1\", function () {",
+									"    pm.expect(users.totalCount).to.be.above(1)",
+									"});",
+									"",
+									"pm.test(\"Cursors are equal to total users count in current page\", function () {",
+									"    pm.expect(users.pageInfo.total).to.equal(users.edges.length)",
+									"});",
+									"",
+									"let newly_created_user = users.edges.find(user => user.cursor == pm.collectionVariables.get(\"user\").id)",
+									"",
+									"pm.test(\"Newly created user listed\", function () {",
+									"    console.log(pm.collectionVariables.get(\"user\"))",
+									"    console.log(newly_created_user.node)",
+									"    pm.expect(_.isEqual(pm.collectionVariables.get(\"user\"), newly_created_user.node)).to.be.true;",
+									"});",
+									"",
+									"let orderedUserIdList = getUserIdList(response_json.data.users.edges);",
+									"pm.collectionVariables.set(\"orderedUserIdList\", orderedUserIdList);",
+									"",
+									"function getUserIdList(list) {",
+									"    return result = list.map(value => {",
+									"        return value.cursor;",
+									"    })",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}",
+							"host": [
+								"{{users_end_point}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Users by Ids",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"const users_array = _.get(response_json, 'data.usersByIds');",
+									"",
+									"let queried_user = users_array[1];",
+									"",
+									"console.log(pm.collectionVariables.get(\"user\"))",
+									"pm.test(\"User details are displayed correctly?\", function(){",
+									"    pm.expect(_.isEqual(pm.collectionVariables.get(\"user\"), queried_user)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"user_ids\", JSON.stringify(pm.collectionVariables.get(\"orderedUserIdList\").slice(0,2)))",
+									"console.log(pm.variables.get(\"user_ids\"))",
+									"let query_params = `?userIds=${pm.variables.get(\"user_ids\")}`;",
+									"pm.globals.set(\"query_params\", query_params);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_by_ids}}{{query_params}}",
+							"host": [
+								"{{users_by_ids}}{{query_params}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add locations for user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"user_id\", pm.collectionVariables.get(\"user\").id)",
+									"pm.collectionVariables.set(\"location_ids\", JSON.stringify(Array(pm.collectionVariables.get(\"location\").id).concat(pm.collectionVariables.get(\"orderedLocationIdList\").slice(0,2))))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"let add_location_result = response.data.addLocationsForUser.status;",
+									"pm.test(\"Adding user successful for all location-ids?\", function() {",
+									"    for (result of add_location_result) {",
+									"        pm.expect(result.errors).to.equal(null);",
+									"        pm.expect(result.success).to.be.true;",
+									"        pm.expect(pm.variables.get(\"location_ids\")).to.include(result.locationId)",
+									"    }",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\":{\n    \"userId\":\"{{user_id}}\",\n    \"locationIds\":{{location_ids}}\n}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}/locations/add",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"locations",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add folders for user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"user_id\", pm.collectionVariables.get(\"user\").id)",
+									"",
+									"pm.collectionVariables.set(\"folder_ids\", JSON.stringify(Array(pm.collectionVariables.get(\"folder\").id).concat(pm.collectionVariables.get(\"orderedFolderIdList\").slice(0,2))))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"pm.test(\"Error in response\", function() {",
+									"    pm.expect(response.errors).to.equal(undefined);",
+									"})",
+									"",
+									"let add_folder_result = response.data.addFoldersForUser.status;",
+									"pm.test(\"Adding user successful for all folder-ids?\", function() {",
+									"    for (result of add_folder_result) {",
+									"        pm.expect(result.errors).to.equal(null);",
+									"        pm.expect(result.success).to.be.true;",
+									"        pm.expect(pm.variables.get(\"folder_ids\")).to.include(result.folderId)",
+									"    }",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\":{\n        \"userId\":\"{{user_id}}\",\n        \"folderIds\":{{folder_ids}}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}/folders/add",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"folders",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users assigned to folder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"folder_id\", pm.collectionVariables.get(\"folder\").id)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"pm.test(\"Error in response\", function() {",
+									"    pm.expect(response.errors).to.equal(undefined);",
+									"})",
+									"",
+									"let users_result = response.data.getUsersForFolder",
+									"",
+									"pm.test(\"Added user in folder\", function() {",
+									"    pm.expect(checkUserInResult(users_result)).to.be.true;",
+									"})",
+									"",
+									"function checkUserInResult(users) {",
+									"    for (user of users) {",
+									"        if (user.email == pm.collectionVariables.get(\"user\").email) {",
+									"            return true;",
+									"        }",
+									"    }",
+									"    return false;",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{folders_end_point}}/{{folder_id}}/users",
+							"host": [
+								"{{folders_end_point}}"
+							],
+							"path": [
+								"{{folder_id}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List User Resources",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let query_params = `${pm.collectionVariables.get(\"user\").id}`;",
+									"pm.variables.set(\"encoded_user_id\", query_params);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response_json = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function() { ",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"let resource_list = response_json.data.listUserResources",
+									"",
+									"pm.test(\"Check if folder is present in resource list\", function() {",
+									"    pm.expect(checkResourceInList(pm.collectionVariables.get(\"folder\").id, resource_list)).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Check if location is present in resource list\", function() {",
+									"    pm.expect(checkResourceInList(pm.collectionVariables.get(\"location\").id, resource_list)).to.be.true;",
+									"})",
+									"",
+									"",
+									"function checkResourceInList(Id, list) {",
+									"    for (resource of list) {",
+									"        if (resource.id == Id) {",
+									"            return true",
+									"        }",
+									"    }",
+									"    return false;",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{users_end_point}}/{{encoded_user_id}}/resources",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"{{encoded_user_id}}",
+								"resources"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove locations for user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"pm.test(\"Error in response\", function() {",
+									"    pm.expect(response.errors).to.equal(undefined);",
+									"})",
+									"",
+									"pm.test(\"User removed\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\":{\n        \"userId\":\"{{user_id}}\",\n        \"locationIds\":{{location_ids}}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}/locations/remove",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"locations",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove folders for user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains no error\", function () {",
+									"    pm.response.to.not.be.error;",
+									"});",
+									"",
+									"pm.test(\"Error in response\", function() {",
+									"    pm.expect(response.errors).to.equal(undefined);",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\":{\n        \"userId\":\"{{user_id}}\",\n        \"folderIds\":{{folder_ids}}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}/folders/remove",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"folders",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"input\":{\n        \"id\":\"VXNlcjo2MDk1OA==\",\n        \"email\":\"pttqa1+4988@gmail.com\",\n        \"firstName\":\"pttqa1+4187\",\n        \"roleId\": \"Q3VzdG9tUm9sZTo1OTE5\",\n        \"lastName\":\"\",\n        \"phone\":\"\",\n        \"archived\":false,\n        \"directCustomer\":true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_end_point}}/update",
+							"host": [
+								"{{users_end_point}}"
+							],
+							"path": [
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Interactions",
+			"item": [
+				{
+					"name": "Fetch interactions with filters",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"ReviewlocationId\", \"TG9jYXRpb246MTA1NTk0Nw==\");",
+									"pm.variables.set(\"category\", \"Review\");",
+									"pm.variables.set(\"siteUrls\", JSON.stringify([\"maps.google.com\"]));",
+									"pm.variables.set(\"startDate\", \"01-01-2024\");",
+									"pm.variables.set(\"endDate\", \"13-09-2024\");",
+									"pm.variables.set(\"ratingFilters\", JSON.stringify([4]));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response contains interactions data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property(\"data\");",
+									"    pm.expect(jsonData.data).to.have.property(\"interactions\");",
+									"    pm.expect(jsonData.data.interactions).to.have.property(\"pageInfo\");",
+									"    pm.expect(jsonData.data.interactions).to.have.property(\"edges\");",
+									"    pm.expect(jsonData.data.interactions).to.have.property(\"totalCount\");",
+									"});",
+									"",
+									"pm.test(\"PageInfo fields are correct\", function () {",
+									"    var pageInfo = pm.response.json().data.interactions.pageInfo;",
+									"    pm.expect(pageInfo).to.have.property(\"hasNextPage\", false);",
+									"    pm.expect(pageInfo).to.have.property(\"hasPreviousPage\", false);",
+									"});",
+									"",
+									"pm.test(\"Edges array contains two reviews\", function () {",
+									"    var edges = pm.response.json().data.interactions.edges;",
+									"    pm.expect(edges.length).to.equal(3);",
+									"});",
+									"",
+									"pm.test(\"First review node fields are present\", function () {",
+									"    var firstNode = pm.response.json().data.interactions.edges[0].node;",
+									"    pm.expect(firstNode).to.have.property(\"id\");",
+									"    pm.expect(firstNode).to.have.property(\"source\", \"maps.google.com\");",
+									"    pm.expect(firstNode).to.have.property(\"authorName\");",
+									"    pm.expect(firstNode).to.have.property(\"authorAvatar\");",
+									"    pm.expect(firstNode).to.have.property(\"authorUrl\");",
+									"    pm.expect(firstNode).to.have.property(\"rating\");",
+									"    pm.expect(firstNode).to.have.property(\"date\");",
+									"    pm.expect(firstNode).to.have.property(\"category\", \"Review\");",
+									"    pm.expect(firstNode).to.have.property(\"type\", \"Review\");",
+									"    pm.expect(firstNode).to.have.property(\"responded\");",
+									"    pm.expect(firstNode).to.have.property(\"totalResponses\");",
+									"});",
+									"",
+									"pm.test(\"Total count matches the expected value\", function () {",
+									"    var totalCount = pm.response.json().data.interactions.totalCount;",
+									"    pm.expect(totalCount).to.equal(3);",
+									"});",
+									"",
+									"",
+									"pm.test(\"All nodes have valid id and authorName\", function () {",
+									"    var edges = pm.response.json().data.interactions.edges;",
+									"    edges.forEach(function (edge) {",
+									"        pm.expect(edge.node).to.have.property(\"id\").that.is.a('string');",
+									"        pm.expect(edge.node).to.have.property(\"interactionId\").that.is.a('string')",
+									"        pm.expect(edge.node).to.have.property(\"authorName\").that.is.a('string');",
+									"    });",
+									"});",
+									"",
+									"pm.test(\"hasNextPage and hasPreviousPage should be false\", function () {",
+									"    var pageInfo = pm.response.json().data.interactions.pageInfo;",
+									"    pm.expect(pageInfo.hasNextPage).to.equal(false);",
+									"    pm.expect(pageInfo.hasPreviousPage).to.equal(false);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{api_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/v4/locations/{{ReviewlocationId}}/reviews?category={{category}}&siteUrls={{siteUrls}}&startDate={{startDate}}&endDate={{endDate}}&ratingFilters=[{{ratingFilters}}]",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v4",
+								"locations",
+								"{{ReviewlocationId}}",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "{{category}}"
+								},
+								{
+									"key": "siteUrls",
+									"value": "{{siteUrls}}"
+								},
+								{
+									"key": "startDate",
+									"value": "{{startDate}}"
+								},
+								{
+									"key": "endDate",
+									"value": "{{endDate}}"
+								},
+								{
+									"key": "ratingFilters",
+									"value": "[{{ratingFilters}}]"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Plan Sites",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response_json = pm.response.json();",
+							"",
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains no error\", function() { ",
+							"    var cursor = _.get(response_json, 'data.allLocations.edges[0].cursor');",
+							"    pm.response.to.not.be.error;",
+							"    console.log(cursor);",
+							"})",
+							"",
+							"pm.test(\"Locations are returned\", function() {",
+							"    pm.expect(response_json.data.allLocations).to.have.property('edges');",
+							"    pm.expect(response_json.data.allLocations).to.have.property('pageInfo');",
+							"})",
+							"",
+							"pm.test(\"Count of locations\", function() {",
+							"    var locationCount = response_json.data.allLocations.pageInfo.total;",
+							"    pm.expect(locationCount).to.not.be.null;",
+							"})",
+							"",
+							"pm.test(\"Newly created location displayed or not\", function(){",
+							"    pm.expect(checkLocationInPage(response_json.data.allLocations)).to.be.true;",
+							"});",
+							"",
+							"let orderedLocationIdList = getLocationIdList(response_json.data.allLocations.edges);",
+							"pm.collectionVariables.set(\"orderedLocationIdList\", orderedLocationIdList);",
+							"",
+							"function checkLocationInPage(locationsPage){",
+							"    for (location of locationsPage.edges){",
+							"        if (location.cursor == pm.collectionVariables.get(\"location\").id){",
+							"            console.log(\"returning true\")",
+							"            return true;",
+							"        }",
+							"    }",
+							"    return false;",
+							"}",
+							"",
+							"//Add location count test case by iterating over multiple get locations call",
+							"",
+							"// function to get the list of locations ids ordered as per the get locations endpoint result",
+							"function getLocationIdList(list) {",
+							"    return locations = list.map(value => {",
+							"        return value.cursor;",
+							"    })",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{v4_end_point}}/plan-sites",
+					"host": [
+						"{{v4_end_point}}"
+					],
+					"path": [
+						"plan-sites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscriptions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response_json = pm.response.json();",
+							"",
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains no error\", function() { ",
+							"    pm.response.to.not.be.error;",
+							"})",
+							"",
+							"let subscriptions = response_json.data.activeSubscriptions;",
+							"let expected_subscriptions = [\"Monthly\", \"Yearly\", \"Quarterly\"];",
+							"",
+							"pm.test(\"Tenure contains one of Monthly, Quarterly or Yearly\", function() {",
+							"    for (subscription of subscriptions) {",
+							"        pm.expect(expected_subscriptions).to.include(subscription.tenure)",
+							"    }",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{subscription_end_point}}",
+					"host": [
+						"{{subscription_end_point}}"
+					]
+				},
+				"description": "Returns a list of all the tenures. "
+			},
+			"response": []
+		},
+		{
+			"name": "fetch Account Roles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response_json = pm.response.json();",
+							"const default_role_names = ['Client (Write)', 'Manager', 'Client (Read Only)', 'Admin'] ",
+							"",
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains no error\", function() { ",
+							"    var cursor = _.get(response_json, 'data.fetchAccountRoles[0].name');",
+							"    pm.response.to.not.be.error;",
+							"    console.log(cursor);",
+							"})",
+							"",
+							"const roles = _.get(response_json,'data.fetchAccountRoles')",
+							"pm.collectionVariables.set(\"roles\", JSON.stringify(roles))",
+							"console.log(pm.collectionVariables.get(\"roles\"))",
+							"",
+							"let role_names = roles.map(role => role.name)",
+							"console.log(role_names)",
+							"",
+							"pm.test(\"Contains default roles\", function() {",
+							"    pm.expect(default_role_names.every(value => role_names.includes(value))).to.be.true;",
+							"})",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{roles_end_point}}",
+					"host": [
+						"{{roles_end_point}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bulk Upload details",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{location_end_point}}/bulk-upload/QnVsa1VwbG9hZFRhc2s6NzRiNzc4ZGUtOWZmOS00OGI1LWJkNjctN2MzNWMzMzQ3MzA0",
+					"host": [
+						"{{location_end_point}}"
+					],
+					"path": [
+						"bulk-upload",
+						"QnVsa1VwbG9hZFRhc2s6NzRiNzc4ZGUtOWZmOS00OGI1LWJkNjctN2MzNWMzMzQ3MzA0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://rohit.synup.com/api/v4/locations/TG9jYXRpb246MTI5Njkw/google-analytics?fromDate=2021-09-01&toDate=2021-09-21",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "API JLYTGFgzbuIx44HXwHmXIDdN1Zo",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://rohit.synup.com/api/v4/locations/TG9jYXRpb246MTI5Njkw/google-analytics?fromDate=2021-09-01&toDate=2021-09-21",
+					"protocol": "https",
+					"host": [
+						"rohit",
+						"synup",
+						"com"
+					],
+					"path": [
+						"api",
+						"v4",
+						"locations",
+						"TG9jYXRpb246MTI5Njkw",
+						"google-analytics"
+					],
+					"query": [
+						{
+							"key": "fromDate",
+							"value": "2021-09-01"
+						},
+						{
+							"key": "toDate",
+							"value": "2021-09-21"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Plan Sites",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response_json = pm.response.json();",
+							"",
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							" //need to be reworked",
+							"pm.test(\"Contains no error\", function() { ",
+							"    var cursor = _.get(response_json, 'data.allLocations.edges[0].cursor');",
+							"    pm.response.to.not.be.error;",
+							"    console.log(cursor);",
+							"})",
+							"",
+							"pm.test(\"Locations are returned\", function() {",
+							"    pm.expect(response_json.data.allLocations).to.have.property('edges');",
+							"    pm.expect(response_json.data.allLocations).to.have.property('pageInfo');",
+							"})",
+							"",
+							"pm.test(\"Count of locations\", function() {",
+							"    var locationCount = response_json.data.allLocations.pageInfo.total;",
+							"    pm.expect(locationCount).to.not.be.null;",
+							"})",
+							"",
+							"pm.test(\"Newly created location displayed or not\", function(){",
+							"    pm.expect(checkLocationInPage(response_json.data.allLocations)).to.be.true;",
+							"});",
+							"",
+							"let orderedLocationIdList = getLocationIdList(response_json.data.allLocations.edges);",
+							"pm.collectionVariables.set(\"orderedLocationIdList\", orderedLocationIdList);",
+							"",
+							"function checkLocationInPage(locationsPage){",
+							"    for (location of locationsPage.edges){",
+							"        if (location.cursor == pm.collectionVariables.get(\"location\").id){",
+							"            console.log(\"returning true\")",
+							"            return true;",
+							"        }",
+							"    }",
+							"    return false;",
+							"}",
+							"",
+							"//Add location count test case by iterating over multiple get locations call",
+							"",
+							"// function to get the list of locations ids ordered as per the get locations endpoint result",
+							"function getLocationIdList(list) {",
+							"    return locations = list.map(value => {",
+							"        return value.cursor;",
+							"    })",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{v4_end_point}}/plan-sites",
+					"host": [
+						"{{v4_end_point}}"
+					],
+					"path": [
+						"plan-sites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Connected Accounts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{v4_end_point}}/connected-accounts",
+					"host": [
+						"{{v4_end_point}}"
+					],
+					"path": [
+						"connected-accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Disconnect google connected account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{v4_end_point}}/connected-accounts/disconnect-google",
+					"host": [
+						"{{v4_end_point}}"
+					],
+					"path": [
+						"connected-accounts",
+						"disconnect-google"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Disconnect Facebook Connected Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{v4_end_point}}/connected-accounts/disconnect-facebook",
+					"host": [
+						"{{v4_end_point}}"
+					],
+					"path": [
+						"connected-accounts",
+						"disconnect-facebook"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Disconnect a connected account location",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"input\": {\n        \"locationId\": \"TG9jYXRpb246Mjc1ODIx\",\n        \"site\": \"FACEBOOK\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{v4_end_point}}/connected-accounts/disconnect-listing",
+					"host": [
+						"{{v4_end_point}}"
+					],
+					"path": [
+						"connected-accounts",
+						"disconnect-listing"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "v4_end_point",
+			"value": "{{url}}/api/v4"
+		},
+		{
+			"key": "location_end_point",
+			"value": "{{v4_end_point}}/locations"
+		},
+		{
+			"key": "photos_end_point",
+			"value": "{{location_end_point}}/photos"
+		},
+		{
+			"key": "remove_photos_end_point",
+			"value": "{{photos_end_point}}/remove"
+		},
+		{
+			"key": "update_end_point",
+			"value": "{{location_end_point}}/update"
+		},
+		{
+			"key": "archive_end_point",
+			"value": "{{location_end_point}}/archive"
+		},
+		{
+			"key": "activate_end_point",
+			"value": "{{location_end_point}}/activate"
+		},
+		{
+			"key": "end_point",
+			"value": "{{v4_end_point}}{{location_end_point}}"
+		},
+		{
+			"key": "subscription_end_point",
+			"value": "{{v4_end_point}}/subscriptions"
+		},
+		{
+			"key": "folder_end_point",
+			"value": "{{location_end_point}}/folders"
+		},
+		{
+			"key": "rename_folder_end_point",
+			"value": "{{folder_end_point}}/rename"
+		},
+		{
+			"key": "remove_folder_end_point",
+			"value": "{{folder_end_point}}/remove"
+		},
+		{
+			"key": "tags_end_point",
+			"value": "{{location_end_point}}/tags"
+		},
+		{
+			"key": "remove_tags_end_point",
+			"value": "{{tags_end_point}}/remove"
+		},
+		{
+			"key": "folders_end_point",
+			"value": "{{v4_end_point}}/folders"
+		},
+		{
+			"key": "users_end_point",
+			"value": "{{v4_end_point}}/users"
+		},
+		{
+			"key": "update_user",
+			"value": "{{users_end_point}}/update"
+		},
+		{
+			"key": "add_locations_for_user",
+			"value": "{{users_end_point}}/locations/add"
+		},
+		{
+			"key": "remove_locations_for_user",
+			"value": "{{users_end_point}}/locations/remove"
+		},
+		{
+			"key": "add_folders_for_user",
+			"value": "{{users_end_point}}/folders/add"
+		},
+		{
+			"key": "remove_folders_for_user",
+			"value": "{{users_end_point}}/folders/remove"
+		},
+		{
+			"key": "users_by_ids",
+			"value": "{{v4_end_point}}/users-by-ids"
+		},
+		{
+			"key": "roles_end_point",
+			"value": "{{v4_end_point}}/roles"
+		},
+		{
+			"key": "roles",
+			"value": "[{\"id\":\"Q3VzdG9tUm9sZTo0NTAwOA==\",\"name\":\"Manager\",\"createdAt\":\"2020-02-12 07:27:58 UTC\",\"updatedAt\":\"2020-08-17 09:21:22 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo4NzYxOA==\",\"name\":\"Mobile app demo\",\"createdAt\":\"2020-08-03 12:51:42 UTC\",\"updatedAt\":\"2020-08-17 09:11:49 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo4NzI5NA==\",\"name\":\"Freemium\",\"createdAt\":\"2020-05-08 13:01:27 UTC\",\"updatedAt\":\"2020-09-11 15:16:08 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo1Mjg3Nw==\",\"name\":\"Client (Write)\",\"createdAt\":\"2020-02-12 07:31:22 UTC\",\"updatedAt\":\"2020-08-17 09:23:22 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo4NzM0Mg==\",\"name\":\"Tesla Den\",\"createdAt\":\"2020-05-14 13:14:07 UTC\",\"updatedAt\":\"2020-09-04 14:18:28 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo1OTE5\",\"name\":\"District Manager(Read)\",\"createdAt\":\"2020-02-12 07:09:35 UTC\",\"updatedAt\":\"2020-08-17 09:23:41 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo1OTE4\",\"name\":\"Regional Director(Read)\",\"createdAt\":\"2020-02-12 07:09:35 UTC\",\"updatedAt\":\"2020-08-17 09:11:52 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo0NTI5Mw==\",\"name\":\"Division Manager\",\"createdAt\":\"2020-02-12 07:28:05 UTC\",\"updatedAt\":\"2020-08-18 10:49:18 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo0NDUyMg==\",\"name\":\"Admin\",\"createdAt\":\"2020-02-12 07:27:46 UTC\",\"updatedAt\":\"2020-10-29 09:30:00 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo4Njg1NQ==\",\"name\":\"Oye Role Oye\",\"createdAt\":\"2020-03-26 11:43:47 UTC\",\"updatedAt\":\"2020-09-21 09:07:52 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo4Njg1Nw==\",\"name\":\"Society Role\",\"createdAt\":\"2020-03-26 12:00:05 UTC\",\"updatedAt\":\"2020-08-17 09:24:45 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo3MjQwOQ==\",\"name\":\"Client (Read Only)\",\"createdAt\":\"2020-02-12 07:39:43 UTC\",\"updatedAt\":\"2020-08-17 09:25:33 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo1OTE3\",\"name\":\"Regional Director(Write)\",\"createdAt\":\"2020-02-12 07:09:35 UTC\",\"updatedAt\":\"2020-08-17 09:25:47 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo4Njk2OQ==\",\"name\":\"ruben test\",\"createdAt\":\"2020-04-07 13:07:31 UTC\",\"updatedAt\":\"2020-10-07 15:41:35 UTC\"},{\"id\":\"Q3VzdG9tUm9sZTo0NTI5MQ==\",\"name\":\"Corporate Role\",\"createdAt\":\"2020-02-12 07:28:05 UTC\",\"updatedAt\":\"2020-10-29 09:30:54 UTC\"}]"
+		},
+		{
+			"key": "user",
+			"value": {
+				"createdAt": "2020-11-30 06:23:20 UTC",
+				"customRole": {
+					"id": "Q3VzdG9tUm9sZTo1OTE5",
+					"name": "District Manager(Read)"
+				},
+				"directCustomer": true,
+				"email": "pttqa1+1752@gmail.com",
+				"firstName": "pttqa1+1752",
+				"id": "VXNlcjo2MzQzMw==",
+				"inviteStatus": "INVITE_SENT",
+				"lastName": null
+			}
+		},
+		{
+			"key": "folder",
+			"value": {
+				"accountId": 10043,
+				"archived": false,
+				"createdAt": "2021-03-31 11:03:28 UTC",
+				"id": "c0479e49-4eae-4b4a-b872-65c53d4f6cce",
+				"locationCount": null,
+				"name": "mangroove",
+				"root": false
+			}
+		},
+		{
+			"key": "location",
+			"value": {
+				"accountId": 10043,
+				"additionalCategoryIds": [
+					609
+				],
+				"additionalInfo": null,
+				"archived": false,
+				"archivedAt": null,
+				"billingPeriod": null,
+				"bizUrl": "",
+				"bookingUrl": null,
+				"businessHours": [
+					{
+						"day": "SUNDAY",
+						"slots": null,
+						"specialDate": null,
+						"type": "CLOSED"
+					},
+					{
+						"day": "MONDAY",
+						"slots": [
+							{
+								"end": "05:00pm",
+								"start": "09:00am"
+							}
+						],
+						"specialDate": null,
+						"type": "OPEN"
+					},
+					{
+						"day": "TUESDAY",
+						"slots": [
+							{
+								"end": "01:00pm",
+								"start": "09:00am"
+							},
+							{
+								"end": "05:00pm",
+								"start": "02:00pm"
+							}
+						],
+						"specialDate": null,
+						"type": "OPEN"
+					},
+					{
+						"day": "WEDNESDAY",
+						"slots": null,
+						"specialDate": null,
+						"type": "OPEN_24x7"
+					},
+					{
+						"day": "THURSDAY",
+						"slots": null,
+						"specialDate": null,
+						"type": "OPEN_24x7"
+					},
+					{
+						"day": "FRIDAY",
+						"slots": null,
+						"specialDate": null,
+						"type": "CLOSED"
+					},
+					{
+						"day": "SATURDAY",
+						"slots": null,
+						"specialDate": null,
+						"type": "CLOSED"
+					}
+				],
+				"categoryId": 1,
+				"city": "New York",
+				"countryIso": "US",
+				"customAttributes": [
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "LOGAN1",
+						"slug": "logan1",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "Wifi",
+						"slug": "wifi",
+						"type": "BOOLEAN",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "LOGAN2",
+						"slug": "logan2",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"Color",
+							"Style",
+							"Font",
+							"Desc",
+							"Italics"
+						],
+						"name": "Refined Attribute",
+						"slug": "refined_attribute",
+						"type": "ENUM",
+						"value": [
+							"Color"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"sat",
+							"mat",
+							"cat"
+						],
+						"name": "Magnetic",
+						"slug": "magnetic",
+						"type": "ENUM",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "LOGAN3",
+						"slug": "logan3",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "LOGAN4",
+						"slug": "logan4",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"a",
+							"b"
+						],
+						"name": "Filter-Test1",
+						"slug": "filter-test1",
+						"type": "ENUM",
+						"value": [
+							"a"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "LOGAN5",
+						"slug": "logan5",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "testtter",
+						"slug": "testtter",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "Filter-Test2",
+						"slug": "filter-test2",
+						"type": "ARRAY",
+						"value": [
+							"a",
+							"b",
+							"c"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"color",
+							"font",
+							"style"
+						],
+						"name": "refined",
+						"slug": "refined",
+						"type": "ENUM",
+						"value": [
+							"font"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "cs-101",
+						"slug": "cs-101",
+						"type": "BOOLEAN",
+						"value": [
+							"true"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"Product1",
+							"Product2"
+						],
+						"name": "Test Location",
+						"slug": "test_location",
+						"type": "ENUM",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "LOGAN6",
+						"slug": "logan6",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "Filter-Test-Text",
+						"slug": "filter-test-text",
+						"type": "STRING",
+						"value": [
+							"woo.."
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "Aabra Ka Dabra",
+						"slug": "aabra_ka_dabra",
+						"type": "ARRAY",
+						"value": [
+							"list1",
+							"list2",
+							"list3",
+							"list4",
+							"list5",
+							"list6",
+							"list7",
+							"list8"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "Filter-Test-Int",
+						"slug": "filter-test-int",
+						"type": "INTEGER",
+						"value": [
+							"34"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"lab",
+							"spooge",
+							"cocerspan",
+							"golden"
+						],
+						"name": "newbie doggie",
+						"slug": "newbie_doggie",
+						"type": "ENUM",
+						"value": [
+							"lab"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "vk global",
+						"slug": "vk_global",
+						"type": "STRING",
+						"value": [
+							"this is default"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "google_phone",
+						"slug": "google_phone",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [
+							"Location Product 1",
+							"Location Product 2",
+							"Location Product 3",
+							"Location Product 4",
+							"Location Product 5",
+							"Location Product 6",
+							"Location Product 7",
+							"Location Product 8",
+							"Location Product 9",
+							"Location Product 10",
+							"Location Product 11",
+							"Location Product 12",
+							"Location Product 13",
+							"Location Product 14",
+							"Location Product 15",
+							"Location Product 16",
+							"Location Product 17",
+							"Location Product 18",
+							"Location Product 19",
+							"Location Product 20",
+							"Location Product 21",
+							"Location Product 22",
+							"Location Product 23"
+						],
+						"name": "BigList",
+						"slug": "biglist",
+						"type": "ENUM",
+						"value": [
+							"Location Product 1"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "vk lengthy",
+						"slug": "vk_lengthy",
+						"type": "STRING",
+						"value": [
+							"this is default value"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "newly created",
+						"slug": "newly_created",
+						"type": "STRING",
+						"value": []
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "testing_new_account",
+						"slug": "testing_new_account",
+						"type": "STRING",
+						"value": [
+							"test"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "new_attr_account",
+						"slug": "new_attr_account",
+						"type": "STRING",
+						"value": [
+							"test"
+						]
+					},
+					{
+						"archived": false,
+						"enumValues": [],
+						"name": "Test New Attribute",
+						"slug": "test_new_attribute",
+						"type": "STRING",
+						"value": []
+					}
+				],
+				"databaseId": 72435,
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. This is a sample description which is used to complete the 200 characters. Let us believe this has exceeded the character limit otherwise it is going to be a headache to go and change it again. But still to be on the careful side, I am adding a few more line of characters because of which this is going to work.",
+				"facebookUrl": null,
+				"folderId": "03022fa9-debc-4cf7-b2cd-92d90ed074f4",
+				"folderName": "root",
+				"googleplusUrl": null,
+				"hideAddress": false,
+				"id": "TG9jYXRpb246NzI0MzU=",
+				"isRestaurant": false,
+				"latitude": 40.712775,
+				"linkedinUrl": null,
+				"locationPhotos": [],
+				"longitude": -74.005973,
+				"name": "Homenick - Jacobi",
+				"offeringsUrl": null,
+				"ownerEmail": "pttqa1+4264@gmail.com",
+				"ownerName": "John Doe",
+				"package": "PREMIUM",
+				"paymentMethods": [],
+				"phone": "6475543117",
+				"planId": 59,
+				"planName": "v2 Premium",
+				"postalCode": "60605",
+				"reservationUrl": null,
+				"stateIso": "NY",
+				"storeId": "918be",
+				"street": "123 Jump Street",
+				"street1": null,
+				"subCategory": {
+					"databaseId": 20,
+					"id": "U3ViQ2F0ZWdvcnk6MjA=",
+					"name": "Pilates",
+					"primary": true
+				},
+				"subCategoryId": 20,
+				"subCategoryName": "Pilates",
+				"tagline": null,
+				"tags": [
+					"all"
+				],
+				"toplineMessage": null,
+				"toplineMessageText": null,
+				"twitterUrl": null,
+				"videos": [],
+				"yearOfIncorporation": 1179
+			}
+		},
+		{
+			"key": "jpeg_image",
+			"value": "https://synup-qa-automation.s3-us-west-2.amazonaws.com/photos/photo.jpeg"
+		},
+		{
+			"key": "oversize_image",
+			"value": "https://synup-qa-automation.s3-us-west-2.amazonaws.com/photos/Snake_River_(5mb).jpg"
+		},
+		{
+			"key": "png_image",
+			"value": "https://synup-qa-automation.s3-us-west-2.amazonaws.com/photos/photo-png.png"
+		},
+		{
+			"key": "orderedLocationIdList",
+			"value": [
+				"TG9jYXRpb246NjM1Njg=",
+				"TG9jYXRpb246NjM1Njc=",
+				"TG9jYXRpb246NjM1NjY=",
+				"TG9jYXRpb246NjM1NjU=",
+				"TG9jYXRpb246NjM1NjQ=",
+				"TG9jYXRpb246NjM1NjI=",
+				"TG9jYXRpb246NjIzMDk=",
+				"TG9jYXRpb246NjIzMDg=",
+				"TG9jYXRpb246NjIzMDc=",
+				"TG9jYXRpb246NjIzMDY=",
+				"TG9jYXRpb246NjIzMDU=",
+				"TG9jYXRpb246NjIyMzY=",
+				"TG9jYXRpb246NjIyMzU=",
+				"TG9jYXRpb246NjIyMDk=",
+				"TG9jYXRpb246NjIyMDg=",
+				"TG9jYXRpb246NjIyMDc=",
+				"TG9jYXRpb246NjIyMDY=",
+				"TG9jYXRpb246NjIyMDA=",
+				"TG9jYXRpb246NjIxOTk=",
+				"TG9jYXRpb246NjIxOTg=",
+				"TG9jYXRpb246NjIxODQ=",
+				"TG9jYXRpb246NjIxODE=",
+				"TG9jYXRpb246NjIxNjE=",
+				"TG9jYXRpb246NjIxNjA=",
+				"TG9jYXRpb246NjIxNTQ=",
+				"TG9jYXRpb246NjIxNDc=",
+				"TG9jYXRpb246NjIxNDQ=",
+				"TG9jYXRpb246NjIxNDM=",
+				"TG9jYXRpb246NjIxNDI=",
+				"TG9jYXRpb246NjIxNDE=",
+				"TG9jYXRpb246NjIxNDA=",
+				"TG9jYXRpb246NjIxMzk=",
+				"TG9jYXRpb246NjIxMzg=",
+				"TG9jYXRpb246NjIxMzc=",
+				"TG9jYXRpb246NjIxMzY=",
+				"TG9jYXRpb246NjIxMzU=",
+				"TG9jYXRpb246NjIxMzQ=",
+				"TG9jYXRpb246NjIxMzM=",
+				"TG9jYXRpb246NjIxMzI=",
+				"TG9jYXRpb246NjIxMzE=",
+				"TG9jYXRpb246NjIxMjk=",
+				"TG9jYXRpb246NjIxMTg=",
+				"TG9jYXRpb246NjIxMDQ=",
+				"TG9jYXRpb246NjIwOTc=",
+				"TG9jYXRpb246NjIwOTY=",
+				"TG9jYXRpb246NjIwOTU=",
+				"TG9jYXRpb246NjIwOTI=",
+				"TG9jYXRpb246NjIwOTE=",
+				"TG9jYXRpb246NjIwOTA=",
+				"TG9jYXRpb246NjIwODk="
+			]
+		},
+		{
+			"key": "location_photos",
+			"value": [
+				{
+					"databaseId": 20228,
+					"fileSize": 65623,
+					"id": "TWVkaWFGaWxlOjIwMjI4",
+					"name": "cda8509c-023b-4bde-a44f-8698ddc37500",
+					"starred": true,
+					"thumbnailUrl": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/thumbnail_1e8f1bdd-dbe5-4560-8e61-f9e5ad0fefa8.jpg",
+					"type": "ADDITIONAL",
+					"url": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/1e8f1bdd-dbe5-4560-8e61-f9e5ad0fefa8.cda8509c-023b-4bde-a44f-8698ddc37500"
+				},
+				{
+					"databaseId": 20229,
+					"fileSize": 65623,
+					"id": "TWVkaWFGaWxlOjIwMjI5",
+					"name": "8b52f7e1-32f2-4c8a-b326-abe10ea4340e",
+					"starred": true,
+					"thumbnailUrl": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/thumbnail_62971d6d-17a6-41b5-9e2a-d901036b17fd.jpg",
+					"type": "ADDITIONAL",
+					"url": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/62971d6d-17a6-41b5-9e2a-d901036b17fd.8b52f7e1-32f2-4c8a-b326-abe10ea4340e"
+				},
+				{
+					"databaseId": 20230,
+					"fileSize": 65623,
+					"id": "TWVkaWFGaWxlOjIwMjMw",
+					"name": "b7a7e2cc-c9b8-4a2d-9dca-8bb618094615",
+					"starred": true,
+					"thumbnailUrl": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/thumbnail_4c13c04a-44ff-4ebe-8f4a-ba7d86a7ae8a.jpg",
+					"type": "ADDITIONAL",
+					"url": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/4c13c04a-44ff-4ebe-8f4a-ba7d86a7ae8a.b7a7e2cc-c9b8-4a2d-9dca-8bb618094615"
+				},
+				{
+					"databaseId": 20231,
+					"fileSize": 65623,
+					"id": "TWVkaWFGaWxlOjIwMjMx",
+					"name": "bb2e1ce8-23bd-43c1-a267-69c9c7507812",
+					"starred": false,
+					"thumbnailUrl": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/thumbnail_8e0f255a-9fc2-48a4-9fd2-5cdc74208be8.jpg",
+					"type": "ADDITIONAL",
+					"url": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/8e0f255a-9fc2-48a4-9fd2-5cdc74208be8.bb2e1ce8-23bd-43c1-a267-69c9c7507812"
+				},
+				{
+					"databaseId": 20232,
+					"fileSize": 1397098,
+					"id": "TWVkaWFGaWxlOjIwMjMy",
+					"name": "2069dfef-8397-443c-aa92-3dd5838050c7",
+					"starred": false,
+					"thumbnailUrl": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/thumbnail_acc7c657-a391-4f3e-ba65-5c2819e17328.jpg",
+					"type": "ADDITIONAL",
+					"url": "https://sy-media-store.s3-us-west-2.amazonaws.com/77af74561a186b62b4024771d764d72d/59c670a3536b937ec7910f7619ee3304/acc7c657-a391-4f3e-ba65-5c2819e17328.2069dfef-8397-443c-aa92-3dd5838050c7"
+				}
+			]
+		},
+		{
+			"key": "location_ids",
+			"value": "[\"TG9jYXRpb246NjIwMzQ=\",\"TG9jYXRpb246NjIwMzM=\"]"
+		},
+		{
+			"key": "folder_name",
+			"value": "software"
+		},
+		{
+			"key": "location_id",
+			"value": [
+				"TG9jYXRpb246NDk1NTY1"
+			]
+		},
+		{
+			"key": "tag",
+			"value": "cross-platform"
+		},
+		{
+			"key": "orderedUserIdList",
+			"value": [
+				"VXNlcjoxMDEzOA==",
+				"VXNlcjoxMDExMQ==",
+				"VXNlcjoxMDEwNg==",
+				"VXNlcjoxMDEwMQ==",
+				"VXNlcjoxMDA3NQ==",
+				"VXNlcjoxMDA3Mw==",
+				"VXNlcjoxMDAxMQ==",
+				"VXNlcjoxMDAwMw==",
+				"VXNlcjo5NjQ0",
+				"VXNlcjo5NjQz",
+				"VXNlcjozODY1",
+				"VXNlcjozODY0",
+				"VXNlcjozODYz",
+				"VXNlcjozODYy",
+				"VXNlcjozODYx",
+				"VXNlcjozODYw",
+				"VXNlcjozODU5",
+				"VXNlcjozODU4",
+				"VXNlcjozODU3",
+				"VXNlcjozODU2",
+				"VXNlcjozODU1",
+				"VXNlcjozODU0",
+				"VXNlcjozODUz",
+				"VXNlcjozODUy",
+				"VXNlcjozODUx",
+				"VXNlcjozODUw",
+				"VXNlcjozODQ5",
+				"VXNlcjozODQ4",
+				"VXNlcjozODQ3",
+				"VXNlcjozODQ2",
+				"VXNlcjozODQ1",
+				"VXNlcjozODQ0",
+				"VXNlcjozODQz",
+				"VXNlcjozODQy",
+				"VXNlcjozODQx",
+				"VXNlcjozODQw",
+				"VXNlcjozODM5",
+				"VXNlcjozODM4",
+				"VXNlcjozODM3",
+				"VXNlcjozODM2",
+				"VXNlcjozODM1",
+				"VXNlcjozODM0",
+				"VXNlcjozODMz",
+				"VXNlcjozODMy",
+				"VXNlcjozODMx",
+				"VXNlcjozODMw",
+				"VXNlcjozODI5",
+				"VXNlcjozODI4",
+				"VXNlcjozODI3",
+				"VXNlcjozODI2"
+			]
+		},
+		{
+			"key": "orderedFolderIdList",
+			"value": [
+				"014cff65-a6b8-4dd5-a919-ffca7bf28d57",
+				"0360b714-1ba9-47fc-87f3-acdb539ccf95",
+				"047869f7-6147-4e8f-83d8-03b8536d9e8f",
+				"072ba907-0d29-4da6-96ce-82adbbb9a2de",
+				"0874afeb-e0e4-4abb-a4a9-c502effa4b4c",
+				"096eef41-53c3-4943-b89b-78b23b3e35e0",
+				"0cb36dce-44fb-4b2b-a5b0-59b546587457",
+				"0f396428-0e29-48b2-bf82-b0698eb331f7",
+				"0f678230-8524-4b57-aafa-c30f78c6cf16",
+				"162678ed-9cab-4ebc-89e5-5df9a2c5276d",
+				"1877c3e5-0183-43e5-8435-df9ca7429590",
+				"1951d642-bc9c-4664-b882-6b3322560d17",
+				"1d9a88e4-d71f-4b76-8c7a-e8bddd24c3f6",
+				"1e57a038-5d95-4a17-8754-896e20b132dc",
+				"2094fb8e-b5d1-42f8-a01d-d3c036ce93e9",
+				"22b866e2-3a88-4f75-b9b5-5a1ddc86c6b7",
+				"2a113dd6-1b81-4d85-b1da-63ee0208f98a",
+				"2ad88ee6-effe-4b87-87fa-dc0b4faefbef",
+				"2f447d4c-7e9b-4381-988e-2edde40c2ca8",
+				"31f2d995-d4fa-483d-a32c-8bbf2572f9e2",
+				"34bc085f-28c5-4916-a0de-b21b9d551c6b",
+				"3be664e4-9e05-4392-bed5-b2e2a953f521",
+				"3db60626-dbfa-4f9a-899a-24687e0016e4",
+				"3f1ede28-cd37-4583-8983-835868442f63",
+				"405bf3ad-44f1-4ffb-8a30-c80e3b641f6a",
+				"4223c131-5fc5-4c35-942d-0b70fe463144",
+				"4249402f-33d6-4ce9-84f9-676d6dfdcba4",
+				"43fe3cad-bfb7-43ca-a97d-9f67a7091fc4",
+				"44af6880-4d12-418f-b680-23dc41685100",
+				"45e3a571-250b-40a1-a949-e4d51e18e47f",
+				"4a2fdd7e-0aed-4d35-a1c6-c91272cac4f2",
+				"4b144b32-2bdd-4302-8501-e01e315b5453",
+				"4b3d6c1e-da0f-4e3c-b27a-67318ad21e19",
+				"4f013ab1-1713-4672-8dc1-f09fcef4f5a2",
+				"5480b7d2-b9fd-4a01-85e3-d511592a09ea",
+				"574c5b0a-e2a9-493d-a5ed-7eaa5a3bf84a",
+				"57eff2fc-f27d-4eac-b582-b93e911a5735",
+				"58262730-b8aa-4107-a3d1-18f842c5e40e",
+				"5ba8f1d8-8296-4486-8ae0-b2c5b72a097f",
+				"5dac00d4-9ae3-4df6-a946-34391fe9cbb0",
+				"5f0a501c-2a24-4b12-8d1a-6a84424d85ba",
+				"5f8deaef-dda9-4bb7-a451-4e412e8b9928",
+				"600effe5-85a9-48c3-b43e-d77d7b1f507e",
+				"61ae102c-d754-4051-9909-d0c477e9b3b3",
+				"627858af-4f13-4f1b-8655-cca7a92aa41f",
+				"63efb44d-9a45-43e5-9b04-9a627cdbdd83",
+				"660c49bf-a0a0-4756-8834-8012c23f4c19",
+				"67eabec1-0161-4f33-bdc9-e493e7926461",
+				"687cd928-52d3-47a5-aa0a-a1f4e8346373",
+				"6c80e00b-93e3-4671-841a-94b046f14e1b",
+				"6d547a57-1a52-49c2-b701-7b6a1e4b1089",
+				"6d93eb41-3cb3-4e79-9d11-853885b919a1",
+				"6fc37325-6f0a-40ba-a2ee-3e62e517c661",
+				"70180f10-8b42-4e3a-9b2c-47129a3c70c6",
+				"70865250-4626-4a5e-ac6b-3bf4c5314958",
+				"72f359f5-990c-4a77-98a2-624ac46ca92e",
+				"741747b5-d7df-4288-ad8a-03f3ae7c72f5",
+				"772e6c95-0210-49d3-a561-24c218ea94f6",
+				"781d2ba7-f58a-42dc-bd3c-f3c4c7e07791",
+				"78d86d7b-bff1-428f-8f94-c45c86349e96",
+				"78ed238d-e70d-493f-8674-737d8770ce90",
+				"7da555e9-2ace-4617-9809-13506e63fd67",
+				"7e9b234c-a7df-4c11-b542-82f8bac1c4eb",
+				"7ebd4aa7-6075-4a34-ba74-8f38b057203d",
+				"7fa7bd6b-4381-4ec2-bbf6-218b44db9d9d",
+				"8034f822-71f7-4ab0-a3c9-215fad7b96f4",
+				"82efd5f8-e5cb-44bf-89cd-5e5d6848f6a0",
+				"84e2a78f-efe7-480f-bb21-3dba8533ab00",
+				"84fe7b45-24a6-4e65-924c-30883210400e",
+				"8548621f-111e-4460-8b55-72b9f9f4cdbb",
+				"85860beb-8518-4b47-a9ee-709fdcfd967e",
+				"85d744a8-c6ff-48d2-b904-02c517154fdb",
+				"867cfecd-e961-4fb6-9640-0ff4732bd0e7",
+				"889dd648-81c5-4c96-9f2d-9e326ec3bfe8",
+				"88a4c0c8-d8fe-468f-9a31-57f1709c8126",
+				"88ed2504-4403-4e98-b03c-9abc438c89cb",
+				"890b713d-0938-45b4-a79e-453d03cbd624",
+				"8a46c16d-6b36-4173-8e3b-323de3b8a415",
+				"8fcde063-e561-4796-acdf-d53bc155c65d",
+				"90ced178-6b7c-42d6-b57f-b96252a0661f",
+				"912223a2-d9c2-49f5-87da-4757995e6159",
+				"928a22b9-520d-436a-9367-f6540a8ff346",
+				"929a84e4-f48b-41ac-a490-abfc4d48256f",
+				"940b20d2-f0f3-44ef-ab2f-6f00906f6210",
+				"95a504f2-edec-46b6-aec7-cb3916b3a07c",
+				"a04e5126-1760-45fc-866b-fa118b647c00",
+				"a2409ac9-eceb-4c75-8a68-5163442f1e25",
+				"a36853d0-8407-4467-b8dd-c97b722bf8b9",
+				"a64fc6ae-c3bd-4167-8b7e-beef02cf6b70",
+				"a86d853c-2bd6-470d-a2ff-89483abb7478",
+				"aa9155a7-0668-43f2-b407-8b00b39e18ff",
+				"aacb7e4a-5014-41b3-8569-a3bd964d9310",
+				"abb6b649-44d1-42c2-8309-dafe80110991",
+				"adf6cb1d-641a-4f09-8f46-b95b534c05a1",
+				"afd18871-a398-403b-9f59-e06e68a0b45d",
+				"b1f8fda0-620e-4998-a6fa-7d6952d3b88d",
+				"b52d1aa6-643b-45be-ba00-a92d89ad84d9",
+				"b563b302-65fb-4acb-aa01-0cddf6ea6ff5",
+				"b5e1a369-b629-4a46-939b-95d9bc4838bc",
+				"b6507e98-7c45-4d5a-b0c2-fc821c84377a",
+				"b7575a22-4035-4190-becb-5d094908d9b5",
+				"b77e33d7-52e3-45a9-aab3-6e77e5832f75",
+				"b8098a63-2ecb-44ac-b727-0f832e547a3b",
+				"b9ffd670-1259-47f5-9705-e6e1129a78eb",
+				"bd192216-3474-4c93-87f4-5dd34cd90e26",
+				"c28fd568-e8c4-4cac-808d-175ebad226b4",
+				"c4aadafd-cd28-4e75-b375-5743f2cd8464",
+				"c6fad41a-9d52-4019-84c7-7f469709c953",
+				"c80910e8-606d-4d30-8eba-91e19609d421",
+				"c86da9e0-b1cc-4a01-be2a-6ed5a69e3705",
+				"c8746905-764e-4450-b510-49cef33b0c6e",
+				"c8f2ed69-f399-428c-a9a5-005472a26901",
+				"c95dd1a4-b733-4b39-b48a-e7c19cdfd3ed",
+				"cbd96f07-874d-4486-902f-5d679e6fd013",
+				"cc95202f-3526-4c01-a379-ce2eff62015f",
+				"cc960158-02a9-407e-9269-2519d338e662",
+				"cdc416da-0f6c-4867-ad6f-3fc583b0854d",
+				"ce322106-a97f-4a26-b70a-1d1323b35314",
+				"d0d34a51-a8b3-4784-ae96-48f3e7b2f153",
+				"d6642a54-6f6c-4d7f-b7b9-ed54d7d059cf",
+				"dbb5d856-93ce-4cf4-a118-d5b99b3babba",
+				"dc00d126-8158-49b5-8b74-3111a2accebf",
+				"df8a9a09-91a9-418e-ad91-35bfb5b89eac",
+				"e05f8f33-2df2-42e9-9de3-51d8e8affa85",
+				"e0c1e008-7998-45c8-84c0-71e95d1fed1a",
+				"e12d36db-d427-40b2-8d27-9271e7f5e9ed",
+				"e3017924-0332-44f8-9305-4c00b722fa4f",
+				"e3adbb63-da7f-40d8-912c-2d9c9120fa35",
+				"e41b0e67-ae33-4422-9a75-2df4c9354167",
+				"e43a6265-aa81-4c76-812f-c36a9698b182",
+				"e5ae0c4b-f01d-47ca-86d8-e6f99b49433e",
+				"e6715bc2-b703-4a27-8208-d65723ac0696",
+				"e80bede5-5a48-409b-92e9-07b25d693546",
+				"eb4e965b-3ed5-48ed-b844-d13f6ccf34b5",
+				"eb66126f-2d89-4a8d-974c-dcad4b621bf7",
+				"eb6a4019-0337-475c-b1fa-01102e8b1cea",
+				"ecbae6ba-ce55-4e09-bebb-087481180279",
+				"f0509e93-2d60-48d9-916b-a59848a02d5e",
+				"f460de42-d300-4217-b852-9ea3bc6eccaa",
+				"fb8eae75-84b2-4b20-9ab3-053a6bcd8ca9",
+				"fcfbaee2-e500-4c5f-a039-fc6f84ac819a",
+				"fd15dd01-3fa0-4024-ad48-7eef6492375c",
+				"fec5f422-ce59-4c6b-8967-a02e0292d40d"
+			]
+		},
+		{
+			"key": "folder_ids",
+			"value": "[\"891861cd-9a59-4b42-8a17-3b916b8e4296\",\"014cff65-a6b8-4dd5-a919-ffca7bf28d57\",\"0360b714-1ba9-47fc-87f3-acdb539ccf95\"]"
+		}
+	]
+}
