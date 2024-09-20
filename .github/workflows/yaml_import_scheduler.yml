@@ -1,0 +1,60 @@
+name: YAML Import Scheduler
+
+on:
+  push:
+    paths:
+      - '*.yaml'   # Trigger the action when any YAML file is pushed or updated
+
+jobs:
+  schedule_import:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read Project IDs
+        run: |
+          # Read the project IDs from project_ids.txt and store them in a variable
+          PROJECT_IDS=$(cat project_ids.txt)
+          echo "PROJECT_IDS=$PROJECT_IDS" >> $GITHUB_ENV
+
+      - name: Set YAML file URLs
+        run: |
+          # Get all YAML files that were added or modified in this push
+          CHANGED_YAML_FILES=$(git diff --name-only --diff-filter=AMR HEAD~1 HEAD | grep ".yaml")
+
+          # Construct the URLs for all changed YAML files and store them
+          YAML_URLS=()
+          for FILE in $CHANGED_YAML_FILES; do
+            YAML_URL="https://bharath-synup.github.io/apidog-docs/$FILE"
+            YAML_URLS+=($YAML_URL)
+          done
+
+          # Output YAML URLs for later use
+          echo "YAML_URLS=${YAML_URLS[@]}" >> $GITHUB_ENV
+
+      - name: Schedule Import for All Projects
+        run: |
+          # Loop through each project ID and schedule imports for each changed YAML file
+          for PROJECT_ID in ${PROJECT_IDS}; do
+            for YAML_URL in ${YAML_URLS[@]}; do
+              echo "Scheduling import for $YAML_URL in project $PROJECT_ID"
+
+              curl --location "https://api.apidog.com/v1/projects/$PROJECT_ID/import-openapi?locale=en-US" \
+                --header "X-Apidog-Api-Version: 2024-03-28" \
+                --header "Content-Type: application/json" \
+                --header "Accept: application/json" \
+                --header "Authorization: Bearer ${{ secrets.APIDOG_API_KEY }}" \
+                --data "{
+                    \"input\": {
+                        \"url\": \"$YAML_URL\"
+                    }
+                }"
+            done
+          done
+
+      - name: Confirm URLs scheduled
+        run: |
+          echo "YAML files have been scheduled for import to all projects with URLs:"
+          echo "${{ env.YAML_URLS }}"
