@@ -18,7 +18,7 @@ paths:
           in: header
           description: ''
           required: true
-          example: '{{api_key}}'
+          example: 'your_api_key_here'  # Replace with your actual API key for testing
           schema:
             type: string
       responses:
@@ -30,7 +30,9 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security: []
+      security:
+        - ApiKeyAuth: []
+
   /locations/location_id/listings/duplicates:
     get:
       summary: Get duplicate listings for location
@@ -43,7 +45,7 @@ paths:
           in: header
           description: ''
           required: true
-          example: '{{api_key}}'
+          example: 'your_api_key_here'
           schema:
             type: string
       responses:
@@ -55,7 +57,9 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security: []
+      security:
+        - ApiKeyAuth: []
+
   /locations/listings/duplicates:
     get:
       summary: Duplicate Listings Rollup
@@ -68,7 +72,7 @@ paths:
           in: header
           description: ''
           required: true
-          example: '{{api_key}}'
+          example: 'your_api_key_here'
           schema:
             type: string
       responses:
@@ -80,7 +84,9 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security: []
+      security:
+        - ApiKeyAuth: []
+
   /locations/listings/mark-as-duplicate:
     post:
       summary: Mark as duplicate
@@ -93,7 +99,7 @@ paths:
           in: header
           description: ''
           required: true
-          example: '{{api_key}}'
+          example: 'your_api_key_here'
           schema:
             type: string
       requestBody:
@@ -130,7 +136,9 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security: []
+      security:
+        - ApiKeyAuth: []
+
   /locations/listings/mark-as-not-duplicate:
     post:
       summary: Mark as not duplicate
@@ -143,7 +151,7 @@ paths:
           in: header
           description: ''
           required: true
-          example: '{{api_key}}'
+          example: 'your_api_key_here'
           schema:
             type: string
       requestBody:
@@ -180,8 +188,16 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security: []
+      security:
+        - ApiKeyAuth: []
+
 components:
   schemas: {}
-  securitySchemes: {}
-servers: []
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+
+servers:
+  - url: https://api.example.com/v1  # Replace with your actual API server URL
