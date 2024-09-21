@@ -1,0 +1,203 @@
+openapi: 3.0.1
+info:
+  title: synup-v4
+  description: ''
+  version: 1.0.0
+tags:
+  - name: LIST
+paths:
+  /locations/location_id/listings/premium:
+    get:
+      summary: Get Premium listings for a location
+      deprecated: false
+      description: ''
+      tags:
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: 'your_api_key_here'  # Replace with your actual API key for testing
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+        - ApiKeyAuth: []
+
+  /locations/location_id/listings/duplicates:
+    get:
+      summary: Get duplicate listings for location
+      deprecated: false
+      description: ''
+      tags:
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: 'your_api_key_here'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+        - ApiKeyAuth: []
+
+  /locations/listings/duplicates:
+    get:
+      summary: Duplicate Listings Rollup
+      deprecated: false
+      description: ''
+      tags:
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: 'your_api_key_here'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+        - ApiKeyAuth: []
+
+  /locations/listings/mark-as-duplicate:
+    post:
+      summary: Mark as duplicate
+      deprecated: false
+      description: ''
+      tags:
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: 'your_api_key_here'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    locationId:
+                      type: string
+                    listingItemIds:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - locationId
+                    - listingItemIds
+              required:
+                - input
+            example:
+              input:
+                locationId: TG9jYXRpb246NzM1Mzc=
+                listingItemIds:
+                  - TGlzdGluZ0l0ZW06MzMzMjkyOQ==
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+        - ApiKeyAuth: []
+
+  /locations/listings/mark-as-not-duplicate:
+    post:
+      summary: Mark as not duplicate
+      deprecated: false
+      description: ''
+      tags:
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: 'your_api_key_here'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    listingItemIds:
+                      type: array
+                      items:
+                        type: string
+                    locationId:
+                      type: string
+                  required:
+                    - listingItemIds
+                    - locationId
+              required:
+                - input
+            example:
+              input:
+                listingItemIds:
+                  - TGlzdGluZ0l0ZW06MzMzMjkzOA==
+                locationId: TG9jYXRpb246NzM1Mzc=
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+        - ApiKeyAuth: []
+
+components:
+  schemas: {}
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+
+servers:
+  - url: https://api.example.com/v1  # Replace with your actual API server URL
