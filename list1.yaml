@@ -12,7 +12,7 @@ paths:
       deprecated: false
       description: ''
       tags:
-        - Listings
+        - List
       parameters:
         - name: Authorization
           in: header
