@@ -45,18 +45,18 @@ jobs:
       - name: Read Project IDs
         id: read_ids
         run: |
-          # Read the project IDs from project_ids.txt and store them in the environment
+          PROJECT_IDS=""
           while read -r line; do
-            echo "PROJECT_ID=$line" >> $GITHUB_ENV
+            PROJECT_IDS+="$line "
           done < project_ids.txt
+          echo "PROJECT_IDS=$PROJECT_IDS" >> $GITHUB_ENV
 
       - name: Schedule Import for All Projects
         run: |
-          # Read project IDs from the environment and loop through them
-          for PROJECT_ID in ${{ env.PROJECT_ID }}; do
+          # Loop through project IDs and YAML URLs
+          for PROJECT_ID in ${{ env.PROJECT_IDS }}; do
             for YAML_URL in ${{ steps.check_yaml.outputs.YAML_URLS }}; do
               echo "Scheduling import for $YAML_URL in project $PROJECT_ID"
-
               curl --location "https://api.apidog.com/v1/projects/$PROJECT_ID/import-openapi?locale=en-US" \
                 --header "X-Apidog-Api-Version: 2024-03-28" \
                 --header "Content-Type: application/json" \
