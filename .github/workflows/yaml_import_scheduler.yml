@@ -2,7 +2,7 @@ name: YAML Import Scheduler
 
 on:
   workflow_run:
-    workflows: ["Pages Build and Deployment"]  # The name of your Pages build workflow
+    workflows: ["pages-build-deployment"]  # The name of your Pages build workflow
     types:
       - completed
 
