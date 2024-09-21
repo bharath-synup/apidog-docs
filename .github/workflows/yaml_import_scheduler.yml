@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 2  # Fetch more commit history (previous 2 commits)
 
       - name: Read Project IDs
         id: read_ids
