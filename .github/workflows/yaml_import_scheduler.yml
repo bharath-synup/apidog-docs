@@ -1,29 +1,33 @@
 name: YAML Import Scheduler
 
+# Trigger on push only for YAML files
 on:
   push:
     paths:
-      - '*.yaml'   # Trigger the action when any YAML file is pushed or updated
+      - '*.yaml'
 
 jobs:
-  schedule_import:
+  yaml_import_scheduler:
     runs-on: ubuntu-latest
+
+    # Ensure this job runs only after 'pages build and deployment' workflow has completed successfully
+    needs: pages_build_and_deployment  # Use the actual workflow job ID from your Pages workflow
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          fetch-depth: 2  # Fetch more commit history (previous 2 commits)
+          fetch-depth: 2  # Fetch the last 2 commits for comparison
 
       - name: Read Project IDs
         id: read_ids
         run: |
-          # Read the project IDs from project_ids.txt, storing them into the environment
+          # Read the project IDs from project_ids.txt and store them in the environment
           while read -r line; do
             echo "PROJECT_ID=$line" >> $GITHUB_ENV
           done < project_ids.txt
 
-      - name: Set YAML file URLs
+      - name: Get Changed YAML Files
         id: yaml_urls
         run: |
           # Get all YAML files that were added or modified in this push
@@ -60,7 +64,7 @@ jobs:
             done
           done
 
-      - name: Confirm URLs scheduled
+      - name: Confirm URLs Scheduled
         run: |
           echo "YAML files have been scheduled for import to all projects with URLs:"
           echo "${{ steps.yaml_urls.outputs.YAML_URLS }}"
