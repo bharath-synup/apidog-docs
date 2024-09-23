@@ -32,28 +32,3 @@ components:
 
 security:
   - ApiKeyAuth: []
-
-paths:
-  /api/v4/sub-categories:
-    get:
-      summary: Fetch supported subcategories
-      operationId: getSubcategories
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - SubCategories
-      responses:
-        '200':
-          description: A list of subcategories
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SubCategory'
-        '401':
-          description: Unauthorized - Invalid API Key
-
-tags:
-  - name: SubCategories
-    description: API for fetching subcategories
