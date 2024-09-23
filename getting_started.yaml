@@ -14,7 +14,18 @@ components:
       name: Authorization
       description: |
         To authorize, use the API key provided for your account. 
-        Synup: `API {your_api_key_here}`
+        Example: `API {your_api_key}`
+
+  schemas:
+    SubCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1234"
+        name:
+          type: string
+          example: "Restaurants"
 
 security:
   - ApiKeyAuth: []
@@ -34,26 +45,9 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    name:
-                      type: string
+                  $ref: '#/components/schemas/SubCategory'
         '401':
           description: Unauthorized - Invalid API Key
-
-components:
-  schemas:
-    SubCategory:
-      type: object
-      properties:
-        id:
-          type: string
-          example: "1234"
-        name:
-          type: string
-          example: "Restaurants"
 
 tags:
   - name: SubCategories
