@@ -8,7 +8,7 @@ tags:
 paths:
   /locations/location_id/listings/premium:
     get:
-      summary: Get Premium listings for a location
+      summary: Get Premium listings
       deprecated: false
       description: ''
       tags:
@@ -178,7 +178,7 @@ paths:
               input:
                 listingItemIds:
                   - TGlzdGluZ0l0ZW06MzMzMjkzOA==
-                locationId: TG9jYXRpb246NzM1Mzc=
+                locationId: test1 
       responses:
         '200':
           description: ''
