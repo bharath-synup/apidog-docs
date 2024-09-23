@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Synup API
+  description: |
+    Welcome to Synup's API. You can use this API to access endpoints such as Locations, Listings, Analytics, and more.
+  version: 1.0.0
+
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: |
+        To authorize, use the API key provided for your account. 
+        Synup: `API {your_api_key_here}`
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /api/v4/sub-categories:
+    get:
+      summary: Fetch supported subcategories
+      operationId: getSubcategories
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: A list of subcategories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+        '401':
+          description: Unauthorized - Invalid API Key
+
+components:
+  schemas:
+    SubCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1234"
+        name:
+          type: string
+          example: "Restaurants"
+
+tags:
+  - name: SubCategories
+    description: API for fetching subcategories
