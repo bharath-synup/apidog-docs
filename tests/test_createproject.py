@@ -15,7 +15,7 @@ def append_project_id_to_file(project_id, file_path):
     with open(file_path, 'a') as file:
         file.write(f'{project_id}\n')
 
-def test_create_project(page: Page, client_name: str, logo_url: str, base_url: str) -> None:
+def test_create_project(page: Page, client_name: str, client_logo_url: str, client_base_url: str) -> None:
     page.goto("https://app.apidog.com/user/login")
     page.get_by_placeholder("Email").click()
     page.get_by_placeholder("Email").fill("synacc85@gmail.com")
@@ -48,6 +48,9 @@ def test_create_project(page: Page, client_name: str, logo_url: str, base_url: s
     # Extract the current URL and project ID
     current_url = page.url
     print(f'Current URL: {current_url}')
+    print(f'Client_name:{client_name}')
+    print(f'Client_logo:{client_logo}')
+    print(f'Client_base_url:{client_base_url}')
     project_id = extract_project_id(current_url)
 
     if project_id:
