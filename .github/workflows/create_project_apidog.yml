@@ -5,9 +5,17 @@ on:
   workflow_dispatch:
     inputs:
       client_name:
-        description: "Client Name to use in the test"
+        description: 'Client Name'
         required: true
-        default: "Default Client Name"
+        default: 'Test Client'
+      logo_url:
+        description: 'Logo URL'
+        required: true
+        default: 'https://example.com/logo.png'
+      base_url:
+        description: 'Base URL'
+        required: true
+        default: 'https://app.apidog.com'
 
 jobs:
   test:
