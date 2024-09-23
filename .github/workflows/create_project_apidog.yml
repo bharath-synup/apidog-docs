@@ -46,4 +46,4 @@ jobs:
       # Run the Playwright test with the provided client name
       - name: Run Playwright test
         run: |
-          pytest tests/test_createproject.py --client_name "New Client" --client_logo_url "https://newlogo.com/logo.png" --client_base_url "https://app.apidog.com"
+          pytest tests/test_createproject.py --client_name "${{ github.event.inputs.client_name }}" --client_logo_url "${{ github.event.inputs.client_logo_url }}" --client_base_url "${{ github.event.inputs.client_base_url }}"
