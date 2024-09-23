@@ -1,41 +1,41 @@
-name: Run Playwright Script
+name: Run Playwright Test
 
+# This allows you to manually trigger the workflow and pass a custom client name
 on:
   workflow_dispatch:
     inputs:
       client_name:
-        description: 'Client Name to provide to the script'
+        description: "Client Name to use in the test"
         required: true
-        default: 'Client Name'
+        default: "Default Client Name"
 
 jobs:
-  run-playwright:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Checkout the repository to use it in the job
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        playwright install
+      # Install the dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Run Playwright test
-      run: |
-        python -m playwright install
-        python script.py "${{ github.event.inputs.client_name }}"
+      # Install Playwright browsers
+      - name: Install Playwright Browsers
+        run: |
+          python -m playwright install
 
-    - name: Commit changes to project_ids.txt
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        git add project_ids.txt
-        git commit -m "Update project_ids.txt with new project ID"
-        git push
+      # Run the Playwright test with the provided client name
+      - name: Run Playwright test
+        run: |
+          python tests/test_createproject.py "${{ github.event.inputs.client_name }}"
