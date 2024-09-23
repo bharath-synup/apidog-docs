@@ -10,9 +10,9 @@ def client_name(request):
     return request.config.getoption("--client_name")
 
 @pytest.fixture
-def logo_url(request):
+def client_logo_url(request):
     return request.config.getoption("--client_logo_url")
 
 @pytest.fixture
-def base_url(request):
+def client_base_url(request):
     return request.config.getoption("--client_base_url")
