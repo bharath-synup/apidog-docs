@@ -1,14 +1,8 @@
 import re
+import os
 import pdb
 from playwright.sync_api import Page
 import pytest
-
-def pytest_addoption(parser):
-    parser.addoption("--client_name", action="store", default="Default Client Name", help="Name of the client")
-
-@pytest.fixture
-def client_name(request):
-    return request.config.getoption("--client_name")
 
 def extract_project_id(url):
     match = re.search(r'/project/(\d+)', url)
@@ -17,10 +11,11 @@ def extract_project_id(url):
     return None
 
 def append_project_id_to_file(project_id, file_path):
+    print(f'Appending Project ID {project_id} to file {file_path}')  # For debugging
     with open(file_path, 'a') as file:
         file.write(f'{project_id}\n')
 
-def test_create_project(page: Page, client_name: str) -> None:
+def test_create_project(page: Page, client_name: str, logo_url: str, base_url: str) -> None:
     page.goto("https://app.apidog.com/user/login")
     page.get_by_placeholder("Email").click()
     page.get_by_placeholder("Email").fill("synacc85@gmail.com")
@@ -52,10 +47,12 @@ def test_create_project(page: Page, client_name: str) -> None:
     
     # Extract the current URL and project ID
     current_url = page.url
+    print(f'Current URL: {current_url}')
     project_id = extract_project_id(current_url)
 
     if project_id:
         print(f'Project ID: {project_id}')
+        print(f'Current working directory: {os.getcwd()}')
         append_project_id_to_file(project_id, 'project_ids.txt')
     else:
         print('Project ID not found.')
