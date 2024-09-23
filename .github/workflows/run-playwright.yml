@@ -38,4 +38,4 @@ jobs:
       # Run the Playwright test with the provided client name
       - name: Run Playwright test
         run: |
-          python tests/test_createproject.py "${{ github.event.inputs.client_name }}"
+          pytest tests/test_createproject.py "${{ github.event.inputs.client_name }}"
