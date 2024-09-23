@@ -5,6 +5,9 @@ info:
     Welcome to Synup's API. You can use this API to access endpoints such as Locations, Listings, Analytics, and more.
   version: 1.0.0
 
+servers:
+  - url: https://api.example.com/
+    description: Main API Server
 
 components:
   securitySchemes:
@@ -37,6 +40,8 @@ paths:
       operationId: getSubcategories
       security:
         - ApiKeyAuth: []
+      tags:
+        - SubCategories
       responses:
         '200':
           description: A list of subcategories
