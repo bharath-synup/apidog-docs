@@ -49,7 +49,7 @@ def test_create_project(page: Page, client_name: str, client_logo_url: str, clie
     current_url = page.url
     print(f'Current URL: {current_url}')
     print(f'Client_name:{client_name}')
-    print(f'Client_logo:{client_logo}')
+    print(f'Client_logo:{client_logo_url}')
     print(f'Client_base_url:{client_base_url}')
     project_id = extract_project_id(current_url)
 
