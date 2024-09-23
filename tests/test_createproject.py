@@ -29,8 +29,8 @@ def test_create_project(page: Page, client_name: str) -> None:
     page.get_by_placeholder("Password").click()
     page.get_by_placeholder("Password").fill("Synup@123")
     page.get_by_role("button", name="Continue with password").click()
-    
-    pdb.set_trace()
+
+    # Client Name from the fixture
     page.hover(".pui-pages-team-team-manage-index-sortableGridItemHeader >> nth=-1")
     page.wait_for_selector(".ui-dropdown-trigger.tree-node-action-item >> nth=-1")
     page.click(".ui-dropdown-trigger.tree-node-action-item >> nth=-1")
@@ -44,6 +44,7 @@ def test_create_project(page: Page, client_name: str) -> None:
     page.click(".ui-dropdown-trigger.tree-node-action-item >> nth=-1")
     page.get_by_text("Rename").click()
 
+    # Use the provided client name
     client_name_input = page.locator('//input[@id="name"]')
     client_name_input.wait_for(state='visible')
     client_name_input.fill(client_name)
