@@ -1,4 +1,4 @@
-name: Run Playwright Test
+name: Create Project on Apidog
 
 # This allows you to manually trigger the workflow and pass a custom client name
 on:
