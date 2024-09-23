@@ -4,7 +4,7 @@ info:
   description: ''
   version: 1.0.0
 tags:
-  - name: LIST
+  - name: Lists
 paths:
   /locations/location_id/listings/premium:
     get:
