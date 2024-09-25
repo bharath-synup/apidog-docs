@@ -50,7 +50,7 @@ jobs:
 
         # Upload the project_ids.txt file as an artifact for inspection
       - name: Upload project_ids.txt artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: project_ids
           path: project_ids.txt
