@@ -1,0 +1,71 @@
+openapi: "3.0.0"
+info:
+  title: "Synup API"
+  description: |
+    Welcome to **Synup's API**. You can use this API to access endpoints such as **Locations, Listings, Analytics**, and more.
+    The base URL for accessing the Synup API is:
+    `https://api.synup.com/`
+  version: "4.0"
+  contact:
+    email: support@synup.com
+    name: "Synup Support"
+
+servers:
+  - url: "https://api.synup.com/"
+    description: "Synup Production Server"
+
+paths:
+  /api/v4/sub-categories:
+    get:
+      summary: "Fetch supported subcategories"
+      description: "This endpoint returns a list of subcategories supported by Synup."
+      responses:
+        "200":
+          description: "A successful response with a list of subcategories."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subcategories:
+                    type: array
+                    items:
+                      type: string
+        "401":
+          description: "Unauthorized - Invalid or missing API key."
+      security:
+        - apiKeyAuth: []
+      tags:
+        - Subcategories
+
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: "API key to authorize requests. Format: `API <your_api_key>`"
+
+security:
+  - apiKeyAuth: []
+
+x-api-key-instructions: |
+  ## Generating Your API Key
+  Follow the steps below to generate Synup API keys from the Synup dashboard:
+
+  1. Log in to your Synup workspace (e.g., https://example.synup.com).
+  2. Click on the **Settings** menu on the top-right in the navigation bar.
+  3. Click **Integrations** to view the API keys for your account.
+  4. Enter a name for the API key.
+  5. Click the **Generate** button.
+  6. An API key will be generated.
+  7. Copy and paste the API key in a safe place.
+
+x-authentication: |
+  ## Authentication
+  The `Authorization` and `Content-Type` headers must be passed for all requests.
+
+  If your API key is `T9V35W3V3N8OfOBfgfsy1XT9Owk`, the value of the `Authorization` header should be:
+
+  ```bash
+  Authorization: API T9V35W3V3N8OfOBfgfsy1XT9Owk
