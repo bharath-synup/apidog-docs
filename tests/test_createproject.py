@@ -44,6 +44,10 @@ def test_create_project(page: Page, client_name: str, client_logo_url: str, clie
     client_name_input.wait_for(state='visible')
     client_name_input.fill(client_name)
     page.locator('//button[@type = "button"]/span[text() = "Save"]').click()
+
+    page.hover(".pui-pages-team-team-manage-index-sortableGridItemHeader >> nth=-1")
+    page.click(".pui-pages-team-team-manage-index-sortableGridItemHeader >> nth=-1")
+    page.wait_for_timeout(18000)
     
     # Extract the current URL and project ID
     current_url = page.url
