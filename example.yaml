@@ -12,7 +12,7 @@ paths:
       tags:
       - Default Tag
       summary: Auto-generated GET endpoint
-      description: This endpoint was generated from a cURL command.
+      description: This endpoint was generated from a cURL command. This will help you get the end point for the API you're accessing.
       operationId: get_api_v4_plan-sites
       parameters:
       - name: Content-Type
