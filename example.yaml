@@ -7,26 +7,26 @@ servers:
 - url: https://api.example.com
   description: Main production server
 paths:
-  /api/v4/plan-sites:
+  /api/v4/grid-report/b1584eb4-73aa-4329-b9dd-2c368747f2e7:
     get:
       tags:
       - Default Tag
       summary: Auto-generated GET endpoint
-      description: This endpoint was generated from a cURL command. This will help you get the end point for the API you're accessing.
-      operationId: get_api_v4_plan-sites
+      description: This endpoint was generated from a cURL command.
+      operationId: get_api_v4_grid-report_b1584eb4-73aa-4329-b9dd-2c368747f2e7
       parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        example: API nC3IaYImyrUzMv_NH6MrzDfp-CA
       - name: Content-Type
         in: header
         required: true
         schema:
           type: string
         example: application/json
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: API rnYm2SBgqH8dTOizP9BeT0IntSI
       responses:
         '200':
           description: Successful response
@@ -45,9 +45,9 @@ paths:
           description: Not Found
 components:
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
 security:
-- BearerAuth: []
+- ApiKeyAuth: []
