@@ -47,3 +47,10 @@ jobs:
       - name: Run Playwright test
         run: |
           pytest tests/test_createproject.py --client_name "${{ github.event.inputs.client_name }}" --client_logo_url "${{ github.event.inputs.client_logo_url }}" --client_base_url "${{ github.event.inputs.client_base_url }}"
+
+        # Upload the project_ids.txt file as an artifact for inspection
+      - name: Upload project_ids.txt artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: project_ids
+          path: project_ids.txt
