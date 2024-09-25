@@ -23,7 +23,7 @@ servers:
     description: The base URL for the API. Replace `{{v4_end_point}}` with the actual endpoint.
 
 tags:
-  - name: Listings Copy
+  - name: L1
     description: |
       This section contains endpoints for retrieving listings data. Use these endpoints to get
       various types of listings such as premium, organic, etc.
@@ -32,7 +32,7 @@ paths:
   /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
     get:
       tags:
-        - Listings Copy
+        - L1
       summary: Retrieve Premium Listings for a Location
       description: |
         This endpoint retrieves premium listings for a specified location.
