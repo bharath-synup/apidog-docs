@@ -54,3 +54,14 @@ jobs:
         with:
           name: project_ids
           path: project_ids.txt
+
+      # Optional: Commit changes if the project_ids.txt was modified
+      - name: Commit changes to project_ids.txt
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add project_ids.txt
+          git commit -m "Update project_ids.txt with new project ID" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
