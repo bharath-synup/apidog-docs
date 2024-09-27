@@ -11,7 +11,7 @@ paths:
     get:
       tags:
       - Grid Rank
-      summary: Grid Rank API to generate grid report for the selected location
+      summary: Grid Rank API
       description: This endpoint generates the grid report for the location.
       operationId: get_api_v4_grid-report_b1584eb4-73aa-4329-b9dd-2c368747f2e7
       parameters:
