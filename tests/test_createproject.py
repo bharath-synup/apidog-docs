@@ -19,7 +19,7 @@ def append_project_id_to_file(project_id, file_path):
 def test_create_project(page: Page, client_name: str, client_logo_url: str, client_base_url: str) -> None:
     page.goto("https://app.apidog.com/user/login")
     page.get_by_placeholder("Email").click()
-    page.get_by_placeholder("Email").fill("synacc85@gmail.com")
+    page.get_by_placeholder("Email").fill("bharath.mr@synup.com")
     page.get_by_role("button", name="Continue with email").click()
     page.get_by_role("button", name="Continue with password").click()
     page.get_by_placeholder("Password").click()
