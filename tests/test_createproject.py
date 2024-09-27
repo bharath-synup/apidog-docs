@@ -3,6 +3,7 @@ import os
 import pdb
 from playwright.sync_api import Page
 import pytest
+import requests
 
 def extract_project_id(url):
     match = re.search(r'/project/(\d+)', url)
@@ -63,3 +64,29 @@ def test_create_project(page: Page, client_name: str, client_logo_url: str, clie
         append_project_id_to_file(project_id, 'project_ids.txt')
     else:
         print('Project ID not found.')
+    img_url = "https://s3-us-west-2.amazonaws.com/images.verifymybiz.com/accounts/company_logos/000/016/154/original/CF7HXqaMR6O5yep0oV2I.png"
+
+    # Download the image
+    response = requests.get(img_url)
+    assert response.status_code == 200, f"Failed to download image from {img_url}"
+
+    # Save the image to a temporary file
+    img_file_path = 'downloaded_icon.png'
+    with open(img_file_path, 'wb') as f:
+        f.write(response.content)
+    page.locator("//a[contains(@class, 'pui-components-global-nav-index-nav-item') and span[text()='Settings']]").click()
+    page.locator("//li[contains(@class, 'ui-list-item') and .//img[contains(@src, 'project-icon')]]//button[span[text()='Edit']]").click()
+    page.locator("//div[contains(@class, 'ui-upload-select')]//button[span[text()='Upload Icon']]").click()
+
+    # img_url = "https://s3-us-west-2.amazonaws.com/images.verifymybiz.com/accounts/company_logos/000/016/154/original/CF7HXqaMR6O5yep0oV2I.png"
+
+    # Upload the image file using Playwright
+    upload_input = page.locator('input[type="file"]')
+    upload_input.set_input_files(img_file_path)
+
+    # Optionally, assert if the file is uploaded correctly based on UI changes
+    page.wait_for_timeout(3000)  # wait for 3 seconds for the upload to complete
+
+    # Clean up: Delete the downloaded image after use
+    if os.path.exists(img_file_path):
+        os.remove(img_file_path)
