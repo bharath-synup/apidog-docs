@@ -65,7 +65,11 @@ jobs:
                 --data "{
                     \"input\": {
                         \"url\": \"$YAML_URL\"
-                    }
+                    },
+                    \"options\": {
+                        \"endpointOverwriteBehavior\": \"OVERWRITE_EXISTING\",
+                        \"schemaOverwriteBehavior\": \"OVERWRITE_EXISTING\"
+              }
                 }"
             done
           done
