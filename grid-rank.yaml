@@ -4,45 +4,95 @@ info:
   version: 1.0.0
   description: Auto-generated API documentation from cURL command
 servers:
-- url: https://api.example.com
-  description: Main production server
+  - url: https://api.synup.com
+    description: Main production server
 paths:
-  /api/v4/grid-report/b1584eb4-73aa-4329-b9dd-2c368747f2e7:
-    get:
+  /api/v4/grid-report/create:
+    post:
       tags:
-      - Grid Rank
-      summary: Grid Rank API
-      description: This endpoint generates the grid report for the location.
-      operationId: get_api_v4_grid-report_b1584eb4-73aa-4329-b9dd-2c368747f2e7
+        - Grid Rank
+      summary: Create Grid Report
+      description: This endpoint generates a grid report based on the provided location and business details.
+      operationId: createGridReport
       parameters:
-      - name: Authorization
-        in: header
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          example: API nC3IaYImyrUzMv_NH6MrzDfp-CA
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+          example: application/json
+      requestBody:
         required: true
-        schema:
-          type: string
-        example: API nC3IaYImyrUzMv_NH6MrzDfp-CA
-      - name: Content-Type
-        in: header
-        required: true
-        schema:
-          type: string
-        example: application/json
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locationId:
+                  type: string
+                  example: "TG9jYXRpb246MTA0MzgzNw==q32"
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Debt collection"]
+                businessName:
+                  type: string
+                  example: "Debt rec"
+                businessStreet:
+                  type: string
+                  example: "Aspin Commercial Tower Sheikh Zayed Road, , AE"
+                businessCity:
+                  type: string
+                  example: ""
+                businessState:
+                  type: string
+                  example: ""
+                businessCountry:
+                  type: string
+                  example: "AE"
+                latitude:
+                  type: number
+                  format: double
+                  example: 25.2089625
+                longitude:
+                  type: number
+                  format: double
+                  example: 55.2724984
+                distance:
+                  type: number
+                  format: double
+                  example: 2.5
+                distanceUnit:
+                  type: string
+                  example: "km"
+                gridSize:
+                  type: integer
+                  example: 3
       responses:
         '200':
-          description: Successful response
+          description: Successfully created grid report
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  reportId:
                     type: string
+                    description: ID of the created report
+                    example: "report_12345"
         '400':
-          description: Bad Request
+          description: Bad Request - Invalid input data
         '401':
-          description: Unauthorized
+          description: Unauthorized - Invalid API Key
         '404':
-          description: Not Found
+          description: Not Found - Endpoint not found
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -50,4 +100,4 @@ components:
       in: header
       name: Authorization
 security:
-- ApiKeyAuth: []
+  - ApiKeyAuth: []
