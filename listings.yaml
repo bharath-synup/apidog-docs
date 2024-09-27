@@ -3,8 +3,6 @@ info:
   title: synup-v4
   description: ''
   version: 1.0.0
-tags:
-  - name: Listings
 paths:
   /locations/location_id/listings/premium:
     get:
