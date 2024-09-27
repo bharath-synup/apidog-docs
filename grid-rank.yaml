@@ -7,7 +7,7 @@ servers:
   - url: https://api.synup.com
     description: Main production server
 paths:
-  /api/v4/grid-report/create:
+  /api/v4/create-grid-report:
     post:
       tags:
         - Grid Rank
