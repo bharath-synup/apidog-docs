@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Synupv4APIDemo",
-    "description": "",
+    "title": "Gridrank",
+    "description": "Gridrank API",
     "version": "1.0.0"
   },
   "tags": [
