@@ -1,76 +1,139 @@
 openapi: 3.0.1
 info:
-  title: Listings
+  title: Abc Corp
   description: ''
   version: 1.0.0
+tags:
+  - name: Listings API
 paths:
-  /locations/location_id/listings/premium:
+  /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
     get:
-      summary: Get Premium listings
+      summary: Retrieve Premium Listings for a Location
       deprecated: false
-      description: ''
+      description: >
+        This endpoint retrieves premium listings for a specified location.
+
+        The location is identified by a unique ID included in the URL path.
+
+
+        - **Authorization Required**: This endpoint requires an API key. 
+
+        - **Location ID**: Use a valid location ID in the path.
+
+        - **API Key**: Pass your API key as a Bearer token in the
+        `Authorization` header.
       tags:
-        - Listings
+        - Listings API
+        - L1
       parameters:
         - name: Authorization
           in: header
-          description: ''
+          description: |
+            Your API key for authentication. Use the format:
+            ```
+            Authorization: Bearer {{api_key}}
+            ```
           required: true
-          example: 'your_api_key_here'  # Replace with your actual API key for testing
+          example: '{{api_key}}'
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: >
+            A successful response containing the premium listings for the
+            specified location.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    description: A list of premium listings.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for the listing.
+                        title:
+                          type: string
+                          description: The title of the premium listing.
+                        url:
+                          type: string
+                          description: The URL of the listing.
+              examples:
+                '1':
+                  summary: Success Example
+                  value:
+                    listings:
+                      - id: '12345'
+                        title: Premium Listing Example
+                        url: https://example.com/listing/12345
+          headers: {}
+        '401':
+          description: Unauthorized. The request requires a valid API key.
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
           headers: {}
-      security:
-        - ApiKeyAuth: []
-
-  /locations/location_id/listings/duplicates:
+        '404':
+          description: Location not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /locations/TG9jYXRpb246NzM0NTE=/listings/duplicates:
     get:
       summary: Get duplicate listings for location
       deprecated: false
       description: ''
       tags:
-        - Listings
+        - Listings API
+        - Listings Copy
       parameters:
+        - name: page
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: string
         - name: Authorization
           in: header
           description: ''
-          required: true
-          example: 'your_api_key_here'
+          required: false
+          example: '{{api_key}}'
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: Successful response
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
           headers: {}
-      security:
-        - ApiKeyAuth: []
-
+      security: []
   /locations/listings/duplicates:
     get:
       summary: Duplicate Listings Rollup
       deprecated: false
       description: ''
       tags:
+        - Listings API
         - Listings
       parameters:
         - name: Authorization
           in: header
           description: ''
           required: true
-          example: 'your_api_key_here'
+          example: your_api_key_here
           schema:
             type: string
       responses:
@@ -82,22 +145,21 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security:
-        - ApiKeyAuth: []
-
+      security: []
   /locations/listings/mark-as-duplicate:
     post:
       summary: Mark as duplicate
       deprecated: false
       description: ''
       tags:
+        - Listings API
         - Listings
       parameters:
         - name: Authorization
           in: header
           description: ''
           required: true
-          example: 'your_api_key_here'
+          example: your_api_key_here
           schema:
             type: string
       requestBody:
@@ -134,22 +196,21 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security:
-        - ApiKeyAuth: []
-
+      security: []
   /locations/listings/mark-as-not-duplicate:
     post:
       summary: Mark as not duplicate
       deprecated: false
       description: ''
       tags:
+        - Listings API
         - Listings
       parameters:
         - name: Authorization
           in: header
           description: ''
           required: true
-          example: 'your_api_key_here'
+          example: your_api_key_here
           schema:
             type: string
       requestBody:
@@ -176,7 +237,7 @@ paths:
               input:
                 listingItemIds:
                   - TGlzdGluZ0l0ZW06MzMzMjkzOA==
-                locationId: test1 
+                locationId: test1
       responses:
         '200':
           description: ''
@@ -186,16 +247,8 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-      security:
-        - ApiKeyAuth: []
-
+      security: []
 components:
   schemas: {}
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: Authorization
-
-servers:
-  - url: https://api.example.com/v1  # Replace with your actual API server URL
+  securitySchemes: {}
+servers: []
