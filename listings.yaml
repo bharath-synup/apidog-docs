@@ -248,7 +248,7 @@ paths:
                 properties: {}
           headers: {}
       security: []
-   /api/v1/users:
+  /api/v1/users:
     get:
       summary: Test Get users
       deprecated: false
