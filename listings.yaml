@@ -248,6 +248,73 @@ paths:
                 properties: {}
           headers: {}
       security: []
+  /api/v1/users:
+    get:
+      summary: Test Get users
+      deprecated: false
+      description: Retrieves a list of users
+      tags: []
+      parameters:
+        - name: limit
+          in: query
+          description: Specifies the maximum number of records to return per page.
+          required: false
+          example: '10'
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Indicates the current page of the results you want to retrieve.
+          required: false
+          example: '1'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Idicated that the required number of pages are fetched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                required:
+                  - id
+              examples:
+                '1':
+                  summary: Success
+                  value: |-
+                    [
+                        {
+                            "id": 1,
+                            "name": "John Doe"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Jane Doe"
+                        }
+                    ]'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+
 components:
   schemas: {}
   securitySchemes: {}
