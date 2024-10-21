@@ -248,56 +248,51 @@ paths:
                 properties: {}
           headers: {}
       security: []
-  /api/v1/users:
-    get:
-      summary: Test Get users
+   paths:
+  /locations/listings/mark-as-not-duplicate:
+    post:
+      summary: Mark as not duplicate
       deprecated: false
-      description: Retrieves a list of users
-      tags: []
+      description: ''
+      tags:
+        - Listings API
+        - Listings API
+        - Listings
       parameters:
-        - name: limit
-          in: query
-          description: Specifies the maximum number of records to return per page.
-          required: false
-          example: '10'
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: your_api_key_here
           schema:
             type: string
-        - name: page
-          in: query
-          description: Indicates the current page of the results you want to retrieve.
-          required: false
-          example: '1'
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    listingItemIds:
+                      type: array
+                      items:
+                        type: string
+                    locationId:
+                      type: string
+                  required:
+                    - listingItemIds
+                    - locationId
+              required:
+                - input
+            example:
+              input:
+                listingItemIds:
+                  - TGlzdGluZ0l0ZW06MzMzMjkzOA==
+                locationId: test1
       responses:
         '200':
-          description: Idicated that the required number of pages are fetched
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    description: ID
-                required:
-                  - id
-              examples:
-                '1':
-                  summary: Success
-                  value: |-
-                    [
-                        {
-                            "id": 1,
-                            "name": "John Doe"
-                        },
-                        {
-                            "id": 2,
-                            "name": "Jane Doe"
-                        }
-                    ]'
-          headers: {}
-        '400':
           description: ''
           content:
             application/json:
@@ -305,15 +300,6 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-        '500':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
-          headers: {}
-      security: []
 
 components:
   schemas: {}
