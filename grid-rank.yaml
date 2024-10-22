@@ -90,7 +90,7 @@ paths:
         '400':
           description: Bad Request - Invalid input data
         '401':
-          description: Unauthorized - Invalid API Key
+          description: Unauthorized - Invalid API Keys
         '404':
           description: Not Found - Endpoint not found
 components:
