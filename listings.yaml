@@ -294,7 +294,7 @@ paths:
                         },
                         {
                             "id": 2,
-                            "name": "Jane Doe"
+                            "name": "Jane"
                         }
                     ]'
           headers: {}
