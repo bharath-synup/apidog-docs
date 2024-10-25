@@ -5,10 +5,14 @@ on:
     paths:
       - '**/*.yaml'
       - '**/*.yml'
+      - '!.github/workflows/*.yaml'
+      - '!.github/workflows/*.yml'
   pull_request:
     paths:
       - '**/*.yaml'
       - '**/*.yml'
+      - '!.github/workflows/*.yaml'
+      - '!.github/workflows/*.yml'
 
 jobs:
   lint:
