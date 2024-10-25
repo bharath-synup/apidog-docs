@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Ensure enough history for diff
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -35,12 +37,17 @@ jobs:
       - name: Check changed YAML files
         id: changed_yaml
         run: |
-          CHANGED_YAML_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.yaml' '*.yml' ':!**/.github/workflows/*')
+          # Detect YAML files changed in the latest push
+          CHANGED_YAML_FILES=$(git diff --name-only ${{ github.event.before }} HEAD -- '*.yaml' '*.yml' ':!**/.github/workflows/*')
+          
           if [ -z "$CHANGED_YAML_FILES" ]; then
             echo "No relevant YAML files changed."
             exit 0
           fi
+
+          # Save file list for yamllint
           echo "$CHANGED_YAML_FILES" > changed_files.txt
+          cat changed_files.txt
 
       - name: Run yamllint on changed files
         if: success()
