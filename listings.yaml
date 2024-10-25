@@ -1,7 +1,8 @@
+
 openapi: 3.0.1
 info:
   title: Abc Corp
-  description: ''
+  description: ""
   version: 1.0.0
 tags:
   - name: Listings API
@@ -20,8 +21,7 @@ paths:
 
         - **Location ID**: Use a valid location ID in the path.
 
-        - **API Key**: Pass your API key as a Bearer token in the
-        `Authorization` header.
+        - **API Key**: Pass your API key as a Bearer token in the `Authorization` header.
       tags:
         - Listings API
         - L1
@@ -34,11 +34,11 @@ paths:
             Authorization: Bearer {{api_key}}
             ```
           required: true
-          example: '{{api_key}}'
+          example: "{{api_key}}"
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: >
             A successful response containing the premium listings for the
             specified location.
@@ -63,15 +63,15 @@ paths:
                           type: string
                           description: The URL of the listing.
               examples:
-                '1':
+                "1":
                   summary: Success Example
                   value:
                     listings:
-                      - id: '12345'
+                      - id: "12345"
                         title: Premium Listing Example
                         url: https://example.com/listing/12345
           headers: {}
-        '401':
+        "401":
           description: Unauthorized. The request requires a valid API key.
           content:
             application/json:
@@ -79,7 +79,7 @@ paths:
                 type: object
                 properties: {}
           headers: {}
-        '404':
+        "404":
           description: Location not found.
           content:
             application/json:
@@ -92,26 +92,26 @@ paths:
     get:
       summary: Get duplicate listings for location
       deprecated: false
-      description: ''
+      description: ""
       tags:
         - Listings API
         - Listings Copy
       parameters:
         - name: page
           in: query
-          description: ''
+          description: ""
           required: false
           schema:
             type: string
         - name: Authorization
           in: header
-          description: ''
+          description: ""
           required: false
-          example: '{{api_key}}'
+          example: "{{api_key}}"
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -124,21 +124,21 @@ paths:
     get:
       summary: Duplicate Listings Rollup
       deprecated: false
-      description: ''
+      description: ""
       tags:
         - Listings API
         - Listings
       parameters:
         - name: Authorization
           in: header
-          description: ''
+          description: ""
           required: true
           example: your_api_key_here
           schema:
             type: string
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -150,14 +150,14 @@ paths:
     post:
       summary: Mark as duplicate
       deprecated: false
-      description: ''
+      description: ""
       tags:
         - Listings API
         - Listings
       parameters:
         - name: Authorization
           in: header
-          description: ''
+          description: ""
           required: true
           example: your_api_key_here
           schema:
@@ -188,8 +188,8 @@ paths:
                 listingItemIds:
                   - TGlzdGluZ0l0ZW06MzMzMjkyOQ==
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -201,14 +201,14 @@ paths:
     post:
       summary: Mark as not duplicate
       deprecated: false
-      description: ''
+      description: ""
       tags:
         - Listings API
         - Listings
       parameters:
         - name: Authorization
           in: header
-          description: ''
+          description: ""
           required: true
           example: your_api_key_here
           schema:
@@ -239,8 +239,8 @@ paths:
                   - TGlzdGluZ0l0ZW06MzMzMjkzOA==
                 locationId: test1
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -260,18 +260,18 @@ paths:
           in: query
           description: Specifies the maximum number of records to return per page.
           required: false
-          example: '10'
+          example: "10"
           schema:
             type: string
         - name: page
           in: query
           description: Indicates the current page of the results you want to retrieve.
           required: false
-          example: '1'
+          example: "1"
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Indicated that the required number of pages are fetched
           content:
             application/json:
@@ -284,7 +284,7 @@ paths:
                 required:
                   - id
               examples:
-                '1':
+                "1":
                   summary: Success
                   value: |-
                     [
@@ -294,20 +294,20 @@ paths:
                         },
                         {
                             "id": 2,
-                            "name": "Jane Doe"
+                            "name": "Jane Do"
                         }
                     ]'
           headers: {}
-        '400':
-          description: ''
+        "400":
+          description: ""
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
           headers: {}
-        '500':
-          description: ''
+        "500":
+          description: ""
           content:
             application/json:
               schema:
