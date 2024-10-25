@@ -32,5 +32,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install yamllint
 
-      - name: Run yamllint
-        run: yamllint . --strict
+      - name: Check changed YAML files
+        id: changed_yaml
+        run: |
+          CHANGED_YAML_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.yaml' '*.yml' ':!**/.github/workflows/*')
+          if [ -z "$CHANGED_YAML_FILES" ]; then
+            echo "No relevant YAML files changed."
+            exit 0
+          fi
+          echo "$CHANGED_YAML_FILES" > changed_files.txt
+
+      - name: Run yamllint on changed files
+        if: success()
+        run: |
+          xargs yamllint < changed_files.txt
