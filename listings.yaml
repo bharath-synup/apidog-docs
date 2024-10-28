@@ -259,7 +259,7 @@ paths:
                     - id: 1
                       name: John Doe
                     - id: 2
-                      name: Jane
+                      name: Jane Doe
         "400":
           description: Bad request.
           content:
