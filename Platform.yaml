@@ -13,8 +13,7 @@ paths:
       deprecated: false
       description: Retrieves duplicate listings for a location
       tags:
-        - Listings
-        - Listings
+        - Platform
       parameters:
         - name: locationId
           in: path
