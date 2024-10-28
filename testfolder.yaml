@@ -13,7 +13,7 @@ paths:
       deprecated: false
       description: Retrieves duplicate listings for a location
       tags:
-        - Platform
+        - testfolder
       parameters:
         - name: locationId
           in: path
