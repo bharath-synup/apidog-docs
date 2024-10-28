@@ -5,7 +5,7 @@ info:
   description: ""
   version: 1.0.0
 tags:
-  - name: Patform
+  - name: Platform
 paths:
   /api/v4/locations/{locationId}/listings/duplicates:
     get:
@@ -19,7 +19,7 @@ paths:
           in: path
           description: >-
             Location_id's are base64 encoded (eg: TG9jYXRpb246MTIzNDU2) and have
-            to be decoded (eg: Location:123456) for revealing the entity id's
+            to be decoded (eg: Location:123456) to reveal the entity id's
           required: true
           example: TG9jYXRpb246MTA2MDY4MQ==
           schema:
