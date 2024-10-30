@@ -64,7 +64,7 @@ def test_create_project(page: Page, client_name: str, client_logo_url: str, clie
         append_project_id_to_file(project_id, 'project_ids.txt')
     else:
         print('Project ID not found.')
-    img_url = "https://s3-us-west-2.amazonaws.com/images.verifymybiz.com/accounts/company_logos/000/016/154/original/CF7HXqaMR6O5yep0oV2I.png"
+    img_url = client_logo_url or "https://s3-us-west-2.amazonaws.com/images.verifymybiz.com/accounts/company_logos/000/016/154/original/CF7HXqaMR6O5yep0oV2I.png"
 
     # Download the image
     response = requests.get(img_url)
