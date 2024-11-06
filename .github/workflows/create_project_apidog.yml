@@ -8,11 +8,11 @@ on:
         description: 'Client Name'
         required: true
         default: 'Test Client'
-      logo_url:
+      client_logo_url:
         description: 'Client Logo URL'
         required: true
         default: 'https://example.com/logo.png'
-      base_url:
+      client_base_url:
         description: 'Client Base URL'
         required: true
         default: 'https://app.apidog.com'
