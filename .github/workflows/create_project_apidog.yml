@@ -13,9 +13,9 @@ on:
         required: true
         default: 'https://example.com/logo.png'
       client_base_url:
-        description: 'Client Base URL'
+        description: 'Client Base URL (domain only, e.g., app.example.com, exclude https://)'
         required: true
-        default: 'https://app.apidog.com'
+        default: 'app.example.com'
 
 jobs:
   test:
