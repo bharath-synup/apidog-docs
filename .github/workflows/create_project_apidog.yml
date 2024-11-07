@@ -16,6 +16,10 @@ on:
         description: 'Client Base URL (domain only, e.g., app.example.com, exclude https://)'
         required: true
         default: 'app.example.com'
+      client_api_docs_url:
+        description: 'URL for the api documentation to be hosted'
+        required: true
+        default: 'https://api.example.com'
 
 jobs:
   test:
@@ -46,7 +50,7 @@ jobs:
       # Run the Playwright test with the provided client name
       - name: Run Playwright test
         run: |
-          pytest -s tests/test_createproject.py --client_name "${{ github.event.inputs.client_name }}" --client_logo_url "${{ github.event.inputs.client_logo_url }}" --client_base_url "${{ github.event.inputs.client_base_url }}"
+          pytest -s tests/test_createproject.py --client_name "${{ github.event.inputs.client_name }}" --client_logo_url "${{ github.event.inputs.client_logo_url }}" --client_base_url "${{ github.event.inputs.client_base_url }}  --client_api_docs_url "${{ github.event.inputs.client_api_docs_url }}"
 
         # Upload the project_ids.txt file as an artifact for inspection
       - name: Upload project_ids.txt artifact
