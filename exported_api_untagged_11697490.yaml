@@ -1,0 +1,2128 @@
+openapi: 3.1.0
+info:
+  title: Abc Corp
+  description: ''
+  version: 1.0.0
+tags: []
+paths:
+  /api/v4/locations/loc_id/reviews:
+    get:
+      summary: interactions
+      deprecated: false
+      description: >-
+        This endpoint retrieves all interactions (e.g., reviews, comments) for a
+        specific location identified by its encoded ID. It includes details
+        about each review, such as its content, author information, rating, and
+        responses provided by the business.
+      tags: []
+      parameters:
+        - name: loc_id
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: '{{api_key}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      interactions:
+                        type: object
+                        properties:
+                          pageInfo:
+                            type: object
+                            properties:
+                              hasNextPage:
+                                type: boolean
+                              hasPreviousPage:
+                                type: boolean
+                              endCursor:
+                                type: 'null'
+                              total:
+                                type: 'null'
+                            required:
+                              - hasNextPage
+                              - hasPreviousPage
+                              - endCursor
+                              - total
+                          edges:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                node:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                    interactionId:
+                                      type: string
+                                    source:
+                                      type: string
+                                    title:
+                                      type: 'null'
+                                    content:
+                                      type: string
+                                    locationDbId:
+                                      type: 'null'
+                                    locationEncodedId:
+                                      type: string
+                                    authorName:
+                                      type: string
+                                    authorAvatar:
+                                      type: string
+                                    authorUrl:
+                                      type: string
+                                    authorInfo:
+                                      type: 'null'
+                                    rating:
+                                      type: integer
+                                    date:
+                                      type: string
+                                    permalink:
+                                      type: string
+                                    category:
+                                      type: string
+                                    type:
+                                      type: string
+                                    photoUrl:
+                                      type: 'null'
+                                    photoThumbnailUrl:
+                                      type: 'null'
+                                    responded:
+                                      type: boolean
+                                    notes:
+                                      type: 'null'
+                                    responses:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          interactionId:
+                                            type: string
+                                          source:
+                                            type: string
+                                          title:
+                                            type: 'null'
+                                          content:
+                                            type: string
+                                          locationDbId:
+                                            type: 'null'
+                                          locationEncodedId:
+                                            type: 'null'
+                                          authorName:
+                                            type: string
+                                          authorAvatar:
+                                            type:
+                                              - string
+                                              - 'null'
+                                          authorUrl:
+                                            type:
+                                              - string
+                                              - 'null'
+                                          authorInfo:
+                                            type: 'null'
+                                          rating:
+                                            type: 'null'
+                                          date:
+                                            type: string
+                                          permalink:
+                                            type: 'null'
+                                          category:
+                                            type: string
+                                          type:
+                                            type: string
+                                          photoUrl:
+                                            type: 'null'
+                                          photoThumbnailUrl:
+                                            type: 'null'
+                                          responded:
+                                            type: 'null'
+                                          notes:
+                                            type: 'null'
+                                          responseCount:
+                                            type: 'null'
+                                          canRespond:
+                                            type: 'null'
+                                          totalResponses:
+                                            type: 'null'
+                                          locationId:
+                                            type: 'null'
+                                          respondedWith:
+                                            type: 'null'
+                                          respondedBy:
+                                            type:
+                                              - integer
+                                              - 'null'
+                                          interactionStatus:
+                                            type:
+                                              - string
+                                              - 'null'
+                                        required:
+                                          - interactionId
+                                          - source
+                                          - title
+                                          - content
+                                          - locationDbId
+                                          - locationEncodedId
+                                          - authorName
+                                          - authorAvatar
+                                          - authorUrl
+                                          - authorInfo
+                                          - rating
+                                          - date
+                                          - permalink
+                                          - category
+                                          - type
+                                          - photoUrl
+                                          - photoThumbnailUrl
+                                          - responded
+                                          - notes
+                                          - responseCount
+                                          - canRespond
+                                          - totalResponses
+                                          - locationId
+                                          - respondedWith
+                                          - respondedBy
+                                          - interactionStatus
+                                    responseCount:
+                                      type: 'null'
+                                    canRespond:
+                                      type: boolean
+                                    totalResponses:
+                                      type: integer
+                                    locationId:
+                                      type: integer
+                                    respondedWith:
+                                      type: 'null'
+                                    respondedBy:
+                                      type: 'null'
+                                  required:
+                                    - id
+                                    - interactionId
+                                    - source
+                                    - title
+                                    - content
+                                    - locationDbId
+                                    - locationEncodedId
+                                    - authorName
+                                    - authorAvatar
+                                    - authorUrl
+                                    - authorInfo
+                                    - rating
+                                    - date
+                                    - permalink
+                                    - category
+                                    - type
+                                    - photoUrl
+                                    - photoThumbnailUrl
+                                    - responded
+                                    - notes
+                                    - responses
+                                    - responseCount
+                                    - canRespond
+                                    - totalResponses
+                                    - locationId
+                                    - respondedWith
+                                    - respondedBy
+                                cursor:
+                                  type: string
+                              required:
+                                - node
+                                - cursor
+                          totalCount:
+                            type: integer
+                        required:
+                          - pageInfo
+                          - edges
+                          - totalCount
+                    required:
+                      - interactions
+                required:
+                  - data
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    data:
+                      interactions:
+                        pageInfo:
+                          hasNextPage: false
+                          hasPreviousPage: false
+                          endCursor: null
+                          total: null
+                        edges:
+                          - node:
+                              id: bbfebdaa-3ae5-4205-ae0d-c15c7071abf3
+                              interactionId: bbfebdaa-3ae5-4205-ae0d-c15c7071abf3
+                              source: facebook.com
+                              title: null
+                              content: >-
+                                i would have signed up a contract with them for
+                                school books if they had all the haryana state
+                                board books, but they don't sadly.
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: KBS High School
+                              authorAvatar: >-
+                                http://graph.facebook.com/6611144952298569/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 1
+                              date: '2023-06-08T10:31:42+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 5663dba8-2219-477e-ac96-c803c354c906
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Dear KBS High School, thank you for
+                                    considering Rice - Carter for your school
+                                    book needs. We appreciate your feedback
+                                    regarding the Haryana state board books
+                                    availability. We are constantly updating our
+                                    inventory to better serve our customers and
+                                    will take your request into consideration.
+                                    If there's anything else we can assist you
+                                    with, please feel free to reach out. Thank
+                                    you for sharing your thoughts with us.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Owner
+                                  authorAvatar: null
+                                  authorUrl: null
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2024-05-24T06:29:47.069477+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: COMPLETED
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 1
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246MV8xNjg2MjIwMzAyMDAwLWJiZmViZGFhLTNhZTUtNDIwNS1hZTBkLWMxNWM3MDcxYWJmMw==
+                          - node:
+                              id: f83f99da-de7a-46fb-b225-075f5f916e84
+                              interactionId: f83f99da-de7a-46fb-b225-075f5f916e84
+                              source: facebook.com
+                              title: null
+                              content: >-
+                                i wouldn't recommend them if you're looking for
+                                religious or philosophical books 🥸
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Lohani
+                              authorAvatar: >-
+                                http://graph.facebook.com/6262590240521018/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 1
+                              date: '2023-06-07T15:19:56+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 7ba99777-385d-40ff-98e9-836df9edf53e
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Dear Lohani, thank you for sharing your
+                                    feedback. While we specialize in accounting
+                                    services, we appreciate your input and will
+                                    consider expanding our offerings to include
+                                    a wider range of books in the future. Your
+                                    opinion is valuable to us as we strive to
+                                    improve our services. If you have any
+                                    specific requests or suggestions, please
+                                    feel free to reach out. Thank you again for
+                                    taking the time to review us.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Owner
+                                  authorAvatar: null
+                                  authorUrl: null
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2024-03-21T18:12:46.644536+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: COMPLETED
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 1
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246Ml8xNjg2MTUxMTk2MDAwLWY4M2Y5OWRhLWRlN2EtNDZmYi1iMjI1LTA3NWY1ZjkxNmU4NA==
+                          - node:
+                              id: 31079bb9-c67e-4816-9c73-b37629b76d76
+                              interactionId: 31079bb9-c67e-4816-9c73-b37629b76d76
+                              source: facebook.com
+                              title: null
+                              content: Well service is really appreciative
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Aman Kaushal
+                              authorAvatar: >-
+                                http://graph.facebook.com/6114243948637422/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2023-02-15T16:42:39+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 98d683a1-75bd-4e3d-849d-9475c5d3b1b4
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Thank you so much for your kind words, Aman!
+                                    We're thrilled to hear that you appreciate
+                                    our service. At Rice - Carter, we strive to
+                                    provide excellent accounting services to all
+                                    our clients. Your 5-star rating means a lot
+                                    to us and encourages us to keep up the good
+                                    work. If you have any further questions or
+                                    need assistance in the future, please don't
+                                    hesitate to reach out. Gracias: Rice -
+                                    Carter 
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Owner
+                                  authorAvatar: null
+                                  authorUrl: null
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-12-07T16:15:55.070433+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: FAILED
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 1
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246M18xNjc2NDc5MzU5MDAwLTMxMDc5YmI5LWM2N2UtNDgxNi05YzczLWIzNzYyOWI3NmQ3Ng==
+                          - node:
+                              id: d38cbdd4-3f11-48aa-be0a-b9c109cea6fd
+                              interactionId: d38cbdd4-3f11-48aa-be0a-b9c109cea6fd
+                              source: facebook.com
+                              title: null
+                              content: >-
+                                Good collections.. found what I was looking
+                                for📓
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Alice Ant
+                              authorAvatar: >-
+                                http://graph.facebook.com/5933478530009787/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2022-11-30T12:51:30+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: a4b6a58c-67dd-48be-b730-8a238af02bd5
+                                  source: facebook.com
+                                  title: null
+                                  content: Rice - Carter
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-11-15T13:03:00+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: bc25035b-f75e-495d-8bea-db1d2a1fe180
+                                  source: facebook.com
+                                  title: null
+                                  content: LOL
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-04T11:00:07+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 83dc644c-aecf-49cd-995c-dbbc84112a58
+                                  source: facebook.com
+                                  title: null
+                                  content: awsso
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T18:39:05+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 8ab0e896-83a6-4fc8-9eaf-c5075f61b2f4
+                                  source: facebook.com
+                                  title: null
+                                  content: ni
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T18:33:07+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 9a80a464-8616-4fcc-98c1-178f08710d54
+                                  source: facebook.com
+                                  title: null
+                                  content: already did
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T11:51:45+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 64fbbda1-c3e8-4be0-ae41-8c290237c21b
+                                  source: facebook.com
+                                  title: null
+                                  content: New Nice edited interaction.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T11:42:19+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 9e3caf6b-1653-4bf1-b7ae-97a5a00150a8
+                                  source: facebook.com
+                                  title: null
+                                  content: New NICE!!!
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T11:15:26+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 716ad81e-a5fa-4d74-88fa-966453e7e8cb
+                                  source: facebook.com
+                                  title: null
+                                  content: Nice
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T10:14:20+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: d85bd1ce-fb23-40a6-a27b-d376cf4be30e
+                                  source: facebook.com
+                                  title: null
+                                  content: NIce
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T10:13:47+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: fafe6f4b-123f-4b7a-ba79-fddd57197b94
+                                  source: facebook.com
+                                  title: null
+                                  content: well
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T10:13:11+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: eb807c6c-d278-4ab1-b458-30cd2315731d
+                                  source: facebook.com
+                                  title: null
+                                  content: Nice.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T10:12:18+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: cb95a7d5-2e4c-4aef-87a8-a6c0abccfd49
+                                  source: facebook.com
+                                  title: null
+                                  content: Nice
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Owner
+                                  authorAvatar: null
+                                  authorUrl: null
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T05:23:51.861088+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CREATED
+                                - interactionId: 4f124fc0-a591-4472-96c5-67c1633bc665
+                                  source: facebook.com
+                                  title: null
+                                  content: Nice
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Owner
+                                  authorAvatar: null
+                                  authorUrl: null
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-02-01T05:23:50.335449+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CREATED
+                                - interactionId: c13ada8d-f122-4cfe-a537-cd98d7893646
+                                  source: facebook.com
+                                  title: null
+                                  content: Nice
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Owner
+                                  authorAvatar: null
+                                  authorUrl: null
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2023-01-31T14:45:07.205231+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CREATED
+                                - interactionId: 5ca466f8-c143-4f7d-8ba2-9dd1ba3766ff
+                                  source: facebook.com
+                                  title: null
+                                  content: Hi Alice Ant Thank you2.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-12-04T14:34:03+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                                - interactionId: 3dc2e51c-687f-4eda-818a-7270af7fd65b
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Pundag fast Food Shop which is located in
+                                    Ranchi Jharkhand.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-12-04T10:07:04+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: 1327
+                                  interactionStatus: CONFIRMED
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 16
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246NF8xNjY5ODEyNjkwMDAwLWQzOGNiZGQ0LTNmMTEtNDhhYS1iZTBhLWI5YzEwOWNlYTZmZA==
+                          - node:
+                              id: 8539145f-5710-40c0-a1cf-f9fe88445afc
+                              interactionId: 8539145f-5710-40c0-a1cf-f9fe88445afc
+                              source: facebook.com
+                              title: null
+                              content: Awesome place to vist in weekend
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Asing S
+                              authorAvatar: >-
+                                http://graph.facebook.com/5545742138828091/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2022-11-14T09:08:31+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: d6366510-86ff-4fae-bd35-f9906b1670c4
+                                  source: facebook.com
+                                  title: null
+                                  content: Hi Asing S Thank you.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-11-14T10:53:52+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 1
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246NV8xNjY4NDE2OTExMDAwLTg1MzkxNDVmLTU3MTAtNDBjMC1hMWNmLWY5ZmU4ODQ0NWFmYw==
+                          - node:
+                              id: 28d7b638-e000-4f22-965a-95ba9d816016
+                              interactionId: 28d7b638-e000-4f22-965a-95ba9d816016
+                              source: facebook.com
+                              title: null
+                              content: >-
+                                Pathetic collection. They don't even have the
+                                bestSellers. The collection looks very old too.
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Ritesh Sharma
+                              authorAvatar: >-
+                                http://graph.facebook.com/5180078318750925/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 1
+                              date: '2022-05-26T12:50:44+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: ebab2f21-26bb-451b-9822-4ae427324240
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Ritesh Sharma Thanks so much for leaving
+                                    us a 1 star review! We appreciate your
+                                    business here at Jay biryani testing
+                                    services
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-06-01T08:55:33+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 6e7e670e-ba83-4cbb-9cad-48d0890cc9b3
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Ritesh Sharma, thank you for the
+                                    feedback. We regret the inconvenience. Call
+                                    back you soon
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T13:20:13+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 7f9dc971-e48c-4b82-9cb6-225680bfe65e
+                                  source: facebook.com
+                                  title: null
+                                  content: Dont archive your comment
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T13:05:54+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 3d199718-f322-40ee-b99a-bc611b1f3647
+                                  source: facebook.com
+                                  title: null
+                                  content: We tried to call you
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T13:02:58+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: abc6a3d7-aeef-4e38-877f-648df1664639
+                                  source: facebook.com
+                                  title: null
+                                  content: Rithesh your complaint reported
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T12:35:47+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 0d032627-db57-4905-adf5-18bd5d0201a8
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    THank you Rithesh. We will reconsider your
+                                    case.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T12:21:12+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 6bf41f28-a07b-4f8f-86a0-44fd3b5fba7e
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hello, Ritesh Sharma,
+
+
+                                    Apologies. We always strive to ensure that
+                                    our customers have a good experience. We
+                                    would love to know more. Sai.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-27T03:07:09+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 7
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246Nl8xNjUzNTY5NDQ0MDAwLTI4ZDdiNjM4LWUwMDAtNGYyMi05NjVhLTk1YmE5ZDgxNjAxNg==
+                          - node:
+                              id: eb5481ce-65f0-41cc-a627-0ddc7d3911a0
+                              interactionId: eb5481ce-65f0-41cc-a627-0ddc7d3911a0
+                              source: facebook.com
+                              title: null
+                              content: >-
+                                Best Book shop. Highly recommended for School
+                                and College students.
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Akshay M
+                              authorAvatar: >-
+                                http://graph.facebook.com/7573721316033385/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2022-05-26T11:38:03+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 57c5780f-8368-485e-a17e-0477dccca903
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    I'm not in college so that mean I don't have
+                                    to go to this book shop😎
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Piyoosh Singh
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/1969558680069160/picture
+                                  authorUrl: https://www.facebook.com/1969558680069160
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-26T11:40:21+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 1
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246N18xNjUzNTY1MDgzMDAwLWViNTQ4MWNlLTY1ZjAtNDFjYy1hNjI3LTBkZGM3ZDM5MTFhMA==
+                          - node:
+                              id: 85875b9c-c1ce-4e7c-9bf4-4153c1e0969c
+                              interactionId: 85875b9c-c1ce-4e7c-9bf4-4153c1e0969c
+                              source: facebook.com
+                              title: null
+                              content: very pathetic service.🧐🤓
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Piyoosh Singh
+                              authorAvatar: >-
+                                http://graph.facebook.com/4781559101941752/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 1
+                              date: '2022-02-08T13:41:42+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 1e80c6eb-39df-4106-ba31-6b5ad2cda868
+                                  source: facebook.com
+                                  title: null
+                                  content: Thanks for the update
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-03-15T10:54:20+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 843aca36-29ae-41e7-abad-79a9a9c776b8
+                                  source: facebook.com
+                                  title: null
+                                  content: Thank you Piyoosh
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-02-09T06:13:31+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 2
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246OF8xNjQ0MzI3NzAyMDAwLTg1ODc1YjljLWMxY2UtNGU3Yy05YmY0LTQxNTNjMWUwOTY5Yw==
+                          - node:
+                              id: f005340d-3e15-455c-bb8f-48b3c7712b16
+                              interactionId: f005340d-3e15-455c-bb8f-48b3c7712b16
+                              source: facebook.com
+                              title: null
+                              content: Great collection of books.
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Sagar Gowda
+                              authorAvatar: >-
+                                http://graph.facebook.com/4827539740666695/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2022-02-08T13:35:55+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 37966dd9-cc0a-4956-ae68-4c5c4b74db35
+                                  source: facebook.com
+                                  title: null
+                                  content: Thank you for the review
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-02-09T06:12:58+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 1
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246OV8xNjQ0MzI3MzU1MDAwLWYwMDUzNDBkLTNlMTUtNDU1Yy1iYjhmLTQ4YjNjNzcxMmIxNg==
+                          - node:
+                              id: ac258365-2664-44f9-bc0c-9861e9c2734e
+                              interactionId: ac258365-2664-44f9-bc0c-9861e9c2734e
+                              source: facebook.com
+                              title: null
+                              content: I am not that happy with their service
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Sai Srivatsan Rangarajan Iyengar
+                              authorAvatar: >-
+                                http://graph.facebook.com/6927009667370388/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 1
+                              date: '2022-02-08T13:35:17+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: 9c77deb2-e6a8-4bc8-823b-8ea8fb69b96d
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Sai Srivatsan Rangarajan Iyengar Thank
+                                    you.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T11:31:02+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 970a072f-8504-4c63-b0a4-096f12cfc318
+                                  source: facebook.com
+                                  title: null
+                                  content: this isiidf
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T09:23:36+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 12dce3f9-d325-4b3d-ad57-dfc717bc84e8
+                                  source: facebook.com
+                                  title: null
+                                  content: thank you for the feedback
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T08:53:42+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 6e5525b8-2930-4786-9b79-f8fbd8386085
+                                  source: facebook.com
+                                  title: null
+                                  content: thank you
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-31T08:42:23+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 815dd951-5278-452a-8269-f43b8e685f0e
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Sai Srivatsan Rangarajan Iyengar, thank
+                                    you for the feedback!
+
+                                    Trying edited response
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-26T11:17:59+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 8aff3055-6002-499a-972d-b1fa21835d3d
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Sai Srivatsan Rangarajan Iyengar, thank
+                                    you for the feedback. This is our second
+                                    response. It failed.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-26T11:16:49+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 8d37ed3e-fe47-4629-a05c-134c0f06c84c
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Sai Srivatsan Rangarajan Iyengar, thank
+                                    you for the feedback. This is our second
+                                    response. It failed.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-26T11:15:49+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 99a3a975-3862-47ce-90dd-d674f230c2a8
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Sai Srivatsan Rangarajan Iyengar, thank
+                                    you for the feedback. This is our second
+                                    response. It failed.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-26T11:09:40+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 38a27726-054c-4377-a31e-ad1038cd3e6a
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hi Sai Srivatsan Rangarajan Iyengar, thank
+                                    you for the feedback. We regret the
+                                    inconvenience ....
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-05-25T14:07:45+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: c050b095-73a3-4ecc-8ee8-1a562009f4f0
+                                  source: facebook.com
+                                  title: null
+                                  content: |-
+                                    Me too.
+                                    very pathetic service.😎
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Piyoosh Singh
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/1969558680069160/picture
+                                  authorUrl: https://www.facebook.com/1969558680069160
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2022-02-08T13:40:41+00:00'
+                                  permalink: null
+                                  category: Recommendation
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 10
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246MTBfMTY0NDMyNzMxNzAwMC1hYzI1ODM2NS0yNjY0LTQ0ZjktYmMwYy05ODYxZTljMjczNGU=
+                          - node:
+                              id: 6208e99c-8ed1-4846-9db5-0fc4aa5fa1a9
+                              interactionId: 6208e99c-8ed1-4846-9db5-0fc4aa5fa1a9
+                              source: facebook.com
+                              title: null
+                              content: Prameet bhai ka dukaan hai . Sabse mast
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Johnny Doey
+                              authorAvatar: >-
+                                http://graph.facebook.com/3026555227449550/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2020-10-22T07:13:12+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: f875360f-4bb7-415a-bf98-4cc3674e042d
+                                  source: facebook.com
+                                  title: null
+                                  content: |-
+                                    Thanks for the 5 review. 
+
+                                     Jay biryani testing services , 14, Aniyeril , 2nd Floor, K.R.Colony, Domlur , Johnny , 22 Oct 2020 
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-06-10T10:02:41+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: be3640eb-5880-4ea5-a70d-76f8c8f80a39
+                                  source: facebook.com
+                                  title: null
+                                  content: Thanks for the review.
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-05-21T13:19:22+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 4fa01f3a-74c0-4e23-8541-327a9dafceb7
+                                  source: facebook.com
+                                  title: null
+                                  content: Thank u
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-05-11T08:49:40+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 3
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246MTFfMTYwMzM1MDc5MjAwMC02MjA4ZTk5Yy04ZWQxLTQ4NDYtOWRiNS0wZmM0YWE1ZmExYTk=
+                          - node:
+                              id: 0f2ac1da-9a87-4946-af2d-4fc9d5d1e840
+                              interactionId: 0f2ac1da-9a87-4946-af2d-4fc9d5d1e840
+                              source: facebook.com
+                              title: null
+                              content: >-
+                                الديكور رائع ، الشاورما طعمها أقل من عادي! نتمنى
+                                منه العمل على تحسين جودة المذاق.. الوجبات الأخرى
+                                لم أقم بتجربتها
+                              locationDbId: null
+                              locationEncodedId: TG9jYXRpb246Nzc5OTE=
+                              authorName: Vasanth Ganesh
+                              authorAvatar: >-
+                                http://graph.facebook.com/3521752681177289/picture
+                              authorUrl: https://www.facebook.com/111012697295849/reviews
+                              authorInfo: null
+                              rating: 5
+                              date: '2020-07-27T16:34:00+00:00'
+                              permalink: https://www.facebook.com/111012697295849
+                              category: Recommendation
+                              type: Review
+                              photoUrl: null
+                              photoThumbnailUrl: null
+                              responded: true
+                              notes: null
+                              responses:
+                                - interactionId: aa78d81a-584b-4853-a1a3-0c02e55c8567
+                                  source: facebook.com
+                                  title: null
+                                  content: Test response
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-05-21T07:02:30+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 84d24334-0fd8-4f15-95b9-683dddb05f3c
+                                  source: facebook.com
+                                  title: null
+                                  content: Review
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-05-21T05:17:50+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: a80eae00-4b2e-483f-8351-e63d6dbd9e55
+                                  source: facebook.com
+                                  title: null
+                                  content: Thanks for the review!
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-05-21T05:04:12+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: df7e9700-2939-4001-9f90-57cc88c69499
+                                  source: facebook.com
+                                  title: null
+                                  content: Good
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2021-05-11T11:02:57+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: 79775a23-5e08-425e-a99e-df87d4aaf2ca
+                                  source: facebook.com
+                                  title: null
+                                  content: Seems Fine !! Vasanth
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2020-09-21T08:37:47+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: acc68295-698b-4630-ab7c-927732c93439
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    Hello Vasanth Ganesh,
+
+                                    Thank you for visiting auto loc don't
+                                    approve.
+
+                                    We are very sorry that you had a bad
+                                    experience at our store. We have shared your
+                                    feedback with our team to improve our
+                                    service.
+
+
+                                    Hope to see you again at our store.
+
+
+                                    --
+
+                                    auto loc don't approve
+
+                                    Store Manager
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2020-09-21T04:16:20+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                                - interactionId: e9b6783d-fa1d-4aa8-b77a-0acab99a1e21
+                                  source: facebook.com
+                                  title: null
+                                  content: >-
+                                    الديكور رائع ، الشاورما طعمها أقل من عادي!
+                                    نتمنى منه العمل على تحسين جودة المذاق..
+                                    الوجبات الأخرى لم أقم بتجربتها
+
+                                    (edited)
+                                  locationDbId: null
+                                  locationEncodedId: null
+                                  authorName: Om book shop
+                                  authorAvatar: >-
+                                    http://graph.facebook.com/111012697295849/picture
+                                  authorUrl: https://www.facebook.com/111012697295849
+                                  authorInfo: null
+                                  rating: null
+                                  date: '2020-07-27T16:34:44+00:00'
+                                  permalink: null
+                                  category: Review
+                                  type: Comment
+                                  photoUrl: null
+                                  photoThumbnailUrl: null
+                                  responded: null
+                                  notes: null
+                                  responseCount: null
+                                  canRespond: null
+                                  totalResponses: null
+                                  locationId: null
+                                  respondedWith: null
+                                  respondedBy: null
+                                  interactionStatus: null
+                              responseCount: null
+                              canRespond: true
+                              totalResponses: 7
+                              locationId: 77991
+                              respondedWith: null
+                              respondedBy: null
+                            cursor: >-
+                              SW50ZXJhY3Rpb246MTJfMTU5NTg2NzY0MDAwMC0wZjJhYzFkYS05YTg3LTQ5NDYtYWYyZC00ZmM5ZDVkMWU4NDA=
+                        totalCount: 12
+          headers: {}
+      security: []
+components:
+  schemas: {}
+  securitySchemes: {}
+servers: []
