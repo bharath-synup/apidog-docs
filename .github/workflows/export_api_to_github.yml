@@ -35,8 +35,9 @@ jobs:
           for ENDPOINT_ID in "${ID_ARRAY[@]}"; do
             # Make the API call to export the endpoint
             RESPONSE=$(curl --location --request POST "https://api.apidog.com/v1/projects/${{ secrets.APIDOG_PROJECT_ID }}/export-openapi" \
+              --header "X-Apidog-Api-Version: 2024-03-28" \
               --header "Content-Type: application/json" \
-              --header "Authorization: Bearer ${{ secrets.APIDOG_API_KEY }}" \
+              --header "Authorization: Bearer ${{ secrets.APIDOG_EXPORT_API_KEY }}" \
               --data "{
                 \"selectedEndpointIds\": [$ENDPOINT_ID],
                 \"exportFormat\": \"YAML\"
@@ -46,14 +47,21 @@ jobs:
             TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
             echo "$RESPONSE" > "$TEMP_FILE"
 
-            # Extract the first tag from the YAML file, with a fallback if empty
-            TAG=$(yq e '.tags[0]' "$TEMP_FILE" || echo "untagged_${ENDPOINT_ID}")
-            if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
-              TAG="untagged_${ENDPOINT_ID}"
+            # Extract the first endpoint path and retrieve the last two segments
+            ENDPOINT_PATH=$(yq e 'paths | keys | .[0]' "$TEMP_FILE")
+            if [ -z "$ENDPOINT_PATH" ] || [ "$ENDPOINT_PATH" = "null" ]; then
+              echo "No valid endpoint path found for ID $ENDPOINT_ID. Skipping."
+              continue
             fi
 
-            # Construct the file name using the extracted tag
-            FILE_NAME="exported_api_${TAG}.yaml"
+            # Parse the last two segments of the path
+            SEGMENTS=$(echo "$ENDPOINT_PATH" | awk -F'/' '{print $(NF-1)"_"$NF}')
+            if [ -z "$SEGMENTS" ]; then
+              SEGMENTS="untagged_${ENDPOINT_ID}"
+            fi
+
+            # Construct the file name using the extracted segments
+            FILE_NAME="${SEGMENTS}_endpoint_${ENDPOINT_ID}.yaml"
 
             # Move the temporary file to the final named file
             mv "$TEMP_FILE" "$FILE_NAME"
@@ -65,10 +73,9 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           # Add each exported YAML file to Git
-          for FILE in exported_api_*.yaml; do
+          for FILE in *_endpoint_*.yaml; do
             git add "$FILE"
           done
 
           git commit -m "Exported individual APIs from Apidog"
           git push
-          
