@@ -1,0 +1,71 @@
+name: Export Individual Apidog APIs to GitHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_ids:
+        description: 'Comma-separated list of API endpoint IDs to export individually'
+        required: true
+        default: ''
+
+jobs:
+  export_and_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/download/v4.9.8/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+
+      - name: Set up API IDs
+        id: set_api_ids
+        run: |
+          API_IDS="${{ github.event.inputs.api_ids }}"
+          echo "API_IDS=$API_IDS" >> $GITHUB_ENV
+
+      - name: Export Each API from Apidog
+        id: export_apis
+        run: |
+          IFS=',' read -ra ID_ARRAY <<< "$API_IDS"
+
+          for ENDPOINT_ID in "${ID_ARRAY[@]}"; do
+            # Make the API call to export the endpoint
+            RESPONSE=$(curl --location --request POST "https://api.apidog.com/v1/projects/${{ secrets.APIDOG_PROJECT_ID }}/export-openapi" \
+              --header "Content-Type: application/json" \
+              --header "Authorization: Bearer ${{ secrets.APIDOG_API_KEY }}" \
+              --data "{
+                \"selectedEndpointIds\": [$ENDPOINT_ID],
+                \"exportFormat\": \"YAML\"
+              }")
+
+            # Save the response to a temporary file
+            TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
+            echo "$RESPONSE" > "$TEMP_FILE"
+
+            # Extract the first tag from the YAML file
+            TAG=$(yq e '.tags[0]' "$TEMP_FILE" || echo "untagged_${ENDPOINT_ID}")
+
+            # Construct the file name using the extracted tag
+            FILE_NAME="exported_api_${TAG}.yaml"
+
+            # Move the temporary file to the final named file
+            mv "$TEMP_FILE" "$FILE_NAME"
+          done
+
+      - name: Commit exported YAML files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Move and commit each exported YAML file
+          for FILE in exported_api_*.yaml; do
+            mv "$FILE" path/to/your/directory/"$FILE"
+            git add path/to/your/directory/"$FILE"
+          done
+
+          git commit -m "Exported individual APIs from Apidog"
+          git push
