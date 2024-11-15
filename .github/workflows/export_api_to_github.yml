@@ -61,6 +61,9 @@ jobs:
             # Extract the method and path for the file name
             METHOD=$(yq e '.[keys[0]].get // .[keys[0]].post // .[keys[0]].put // .[keys[0]].delete' "$TEMP_FILE" | head -n 1)  # Extract the method dynamically
             PATH=$(yq e 'keys[0]' "$TEMP_FILE")  # Extract the first path
+            # Debug: Print Method and PAth
+            echo "$METHOD"
+            echo "$PATH"
             
             # Extract the last two segments of the path
             LAST_TWO=$(echo "$PATH" | awk -F'/' '{print $(NF-1) "_" $NF}')  # Get last two segments
