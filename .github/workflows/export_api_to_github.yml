@@ -56,24 +56,28 @@ jobs:
               exit 1
             fi
 
-            # Convert response to YAML if necessary
+            # Save the raw response to a temporary file
             TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
             echo "$RESPONSE" | yq eval -P > "$TEMP_FILE"
 
-            # Extract the method and path for the file name
-            METHOD=$(yq e '.paths | keys | .[0] as $k | .[$k] | keys | .[0]' "$TEMP_FILE")  # Get HTTP method
-            PATH=$(yq e '.paths | keys | .[0]' "$TEMP_FILE")  # Get API path
+            # Debug: Print the file content
+            echo "Exported API YAML content:"
+            cat "$TEMP_FILE"
+
+            # Extract the HTTP method and path
+            PATH=$(yq e '.paths | keys | .[0]' "$TEMP_FILE")
+            METHOD=$(yq e ".paths[\"$PATH\"] | keys | .[0]" "$TEMP_FILE")  # Correct indexing for method
 
             if [ -z "$METHOD" ] || [ -z "$PATH" ]; then
               echo "Failed to parse method or path for endpoint ID: $ENDPOINT_ID" >&2
               exit 1
             fi
 
-            # Extract the last two segments of the path
+            # Extract the last two segments of the path for the file name
             LAST_TWO=$(echo "$PATH" | awk -F'/' '{print $(NF-1) "_" $NF}')
             FILE_NAME="${METHOD}_${LAST_TWO}.yaml"
 
-            # Move the temporary file to the final named file
+            # Rename the temporary file
             mv "$TEMP_FILE" "$FILE_NAME"
           done
 
