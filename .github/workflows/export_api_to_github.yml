@@ -63,9 +63,13 @@ jobs:
 
           # Move and commit each exported YAML file
           for FILE in exported_api_*.yaml; do
-            mv "$FILE" ./"$FILE"
-            git add ./"$FILE"
+            # Only move the file if it’s not already in the desired location
+            if [ "$FILE" != "./$FILE" ]; then
+              mv "$FILE" "./$FILE"
+            fi
+            git add "./$FILE"
           done
 
           git commit -m "Exported individual APIs from Apidog"
           git push
+          
