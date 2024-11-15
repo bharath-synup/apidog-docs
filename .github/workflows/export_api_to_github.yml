@@ -48,7 +48,7 @@ jobs:
             echo "$RESPONSE" > "$TEMP_FILE"
 
             # Extract the first endpoint path and retrieve the last two segments
-            ENDPOINT_PATH=$(yq e 'paths | keys | .[0]' "$TEMP_FILE")
+            ENDPOINT_PATH=$(yq e 'keys(paths) | .[0]' "$TEMP_FILE")
             if [ -z "$ENDPOINT_PATH" ] || [ "$ENDPOINT_PATH" = "null" ]; then
               echo "No valid endpoint path found for ID $ENDPOINT_ID. Skipping."
               continue
