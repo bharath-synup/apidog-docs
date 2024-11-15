@@ -63,8 +63,8 @@ jobs:
 
           # Move and commit each exported YAML file
           for FILE in exported_api_*.yaml; do
-            mv "$FILE" path/to/your/directory/"$FILE"
-            git add path/to/your/directory/"$FILE"
+            mv "$FILE" ./"$FILE"
+            git add ./"$FILE"
           done
 
           git commit -m "Exported individual APIs from Apidog"
