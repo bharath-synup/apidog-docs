@@ -30,18 +30,21 @@ jobs:
       - name: Export Each API from Apidog
         id: export_apis
         run: |
-          IFS=',' read -ra ID_ARRAY <<< "$API_IDS"
+          # Read API IDs from workflow input
+          IFS=',' read -ra ID_ARRAY <<< "${{ github.event.inputs.api_ids }}"
 
           for ENDPOINT_ID in "${ID_ARRAY[@]}"; do
-            # Make the API call to export the endpoint
-            RESPONSE=$(curl --location --request POST "https://api.apidog.com/v1/projects/${{ secrets.APIDOG_PROJECT_ID }}/export-openapi" \
+            # Make the API call to export the endpoint in YAML format
+            RESPONSE=$(curl --location "https://api.apidog.com/v1/projects/$PROJECT_ID/export-openapi" \
+              --header "X-Apidog-Api-Version: 2024-03-28" \
               --header "Content-Type: application/json" \
-              --header "Authorization: Bearer ${{ secrets.APIDOG_API_KEY }}" \
+              --header "Accept: application/json" \
+              --header "Authorization: Bearer $APIDOG_API_KEY" \
               --data "{
                 \"selectedEndpointIds\": [$ENDPOINT_ID],
                 \"exportFormat\": \"YAML\"
               }")
-
+              
             # Save the response to a temporary file
             TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
             echo "$RESPONSE" > "$TEMP_FILE"
