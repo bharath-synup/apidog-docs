@@ -64,13 +64,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Move and commit each exported YAML file
+          # Add each exported YAML file to Git
           for FILE in exported_api_*.yaml; do
-            # Only move the file if it’s not already in the desired location
-            if [ "$FILE" != "./$FILE" ]; then
-              mv "$FILE" "./$FILE"
-            fi
-            git add "./$FILE"
+            git add "$FILE"
           done
 
           git commit -m "Exported individual APIs from Apidog"
