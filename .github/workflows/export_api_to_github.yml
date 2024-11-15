@@ -51,6 +51,9 @@ jobs:
                 \"exportFormat\": \"YAML\"
               }")
 
+            # Debug: Print the response
+            echo "$RESPONSE"
+
             # Save the response to a temporary file
             TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
             echo "$RESPONSE" > "$TEMP_FILE"
