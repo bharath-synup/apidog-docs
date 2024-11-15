@@ -41,7 +41,7 @@ jobs:
               --data "{
                 \"scope\": {
                   \"type\": \"SELECTED_ENDPOINTS\",
-                  \"selectedEndpointIds\": [\"$ENDPOINT_ID\"]
+                  \"selectedEndpointIds\": [$ENDPOINT_ID]
                 },
                 \"options\": {
                   \"includeApidogExtensionProperties\": false,
@@ -51,33 +51,20 @@ jobs:
                 \"exportFormat\": \"YAML\"
               }")
 
-            if [ -z "$RESPONSE" ]; then
-              echo "Failed to fetch API for endpoint ID: $ENDPOINT_ID" >&2
-              exit 1
-            fi
-
-            # Save the raw response to a temporary file
+            # Save the response to a temporary file
             TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
-            echo "$RESPONSE" | yq eval -P > "$TEMP_FILE"
+            echo "$RESPONSE" > "$TEMP_FILE"
 
-            # Debug: Print the file content
-            echo "Exported API YAML content:"
-            cat "$TEMP_FILE"
-
-            # Extract the HTTP method and path
-            PATH=$(yq e '.paths | keys | .[0]' "$TEMP_FILE")
-            METHOD=$(yq e ".paths[\"$PATH\"] | keys | .[0]" "$TEMP_FILE")  # Correct indexing for method
-
-            if [ -z "$METHOD" ] || [ -z "$PATH" ]; then
-              echo "Failed to parse method or path for endpoint ID: $ENDPOINT_ID" >&2
-              exit 1
+            # Extract the first tag from the YAML file, with a fallback if empty
+            TAG=$(yq e '.tags[0]' "$TEMP_FILE" || echo "untagged_${ENDPOINT_ID}")
+            if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+              TAG="untagged_${ENDPOINT_ID}"
             fi
 
-            # Extract the last two segments of the path for the file name
-            LAST_TWO=$(echo "$PATH" | awk -F'/' '{print $(NF-1) "_" $NF}')
-            FILE_NAME="${METHOD}_${LAST_TWO}.yaml"
+            # Construct the file name using the extracted tag
+            FILE_NAME="exported_api_${TAG}.yaml"
 
-            # Rename the temporary file
+            # Move the temporary file to the final named file
             mv "$TEMP_FILE" "$FILE_NAME"
           done
 
@@ -86,7 +73,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          for FILE in *.yaml; do
+          # Add each exported YAML file to Git
+          for FILE in exported_api_*.yaml; do
             git add "$FILE"
           done
 
