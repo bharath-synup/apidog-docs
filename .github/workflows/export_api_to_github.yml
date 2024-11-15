@@ -80,7 +80,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           # Add each exported YAML file to Git
-          for FILE in exported_api_*.yaml; do
+          for FILE in *.yaml; do
             git add "$FILE"
           done
 
