@@ -39,7 +39,15 @@ jobs:
               --header "Content-Type: application/json" \
               --header "Authorization: Bearer ${{ secrets.APIDOG_EXPORT_API_KEY }}" \
               --data "{
-                \"selectedEndpointIds\": [$ENDPOINT_ID],
+                \"scope\": {
+                  \"type\": \"SELECTED_ENDPOINTS\",
+                  \"selectedEndpointIds\": [$ENDPOINT_ID]
+                },
+                \"options\": {
+                  \"includeApidogExtensionProperties\": false,
+                  \"addFoldersToTags\": false
+                },
+                \"oasVersion\": \"3.1\",
                 \"exportFormat\": \"YAML\"
               }")
 
