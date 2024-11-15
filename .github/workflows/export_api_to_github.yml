@@ -39,7 +39,7 @@ jobs:
               --header "X-Apidog-Api-Version: 2024-03-28" \
               --header "Content-Type: application/json" \
               --header "Accept: application/json" \
-              --header "Authorization: Bearer $APIDOG_API_KEY" \
+              --header "Authorization: Bearer $APIDOG_EXPORT_API_KEY" \
               --data "{
                 \"selectedEndpointIds\": [$ENDPOINT_ID],
                 \"exportFormat\": \"YAML\"
