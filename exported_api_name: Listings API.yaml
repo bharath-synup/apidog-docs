@@ -1,0 +1,502 @@
+openapi: 3.1.0
+info:
+  title: Abc Corp
+  description: ''
+  version: 1.0.0
+tags:
+  - name: Listings API
+  - name: Listings
+  - name: Grid Rank
+paths:
+  /locations/TG9jYXRpb246NzAzNTY1/listings/premium:
+    get:
+      summary: Retrieve Premium Listings for a Location
+      deprecated: false
+      description: |
+        This endpoint retrieves premium listings for a specified location.
+
+        The location is identified by a unique ID included in the URL path.
+
+        - **Authorization Required**: This endpoint requires an API key.
+        - **Location ID**: Use a valid location ID in the path.
+        - **API Key**: Pass API key as Bearer token in `Authorization` header.
+      tags:
+        - Listings API
+      parameters:
+        - name: Authorization
+          in: header
+          description: |
+            Your API key for authentication. Use the format:
+            ```
+            Authorization: Bearer 
+            ```
+          required: true
+          example: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          description: |
+            A successful response containing the premium listings for the
+            specified location.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    description: A list of premium listings.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for the listing.
+                        title:
+                          type: string
+                          description: The title of the premium listing.
+                        url:
+                          type: string
+                          description: The URL of the listing.
+              examples:
+                '1':
+                  summary: Success Example
+                  value:
+                    listings:
+                      - id: '12345'
+                        title: Premium Listing Example
+                        url: https://example.com/listing/12345
+          headers: {}
+        '401':
+          description: Unauthorized. The request requires a valid API key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '404':
+          description: Location not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /locations/TG9jYXRpb246NzM0NTE=/listings/duplicates:
+    get:
+      summary: Get duplicate listings for location
+      deprecated: false
+      description: ''
+      tags:
+        - Listings API
+      parameters:
+        - name: page
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          required: false
+          example: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /locations/listings/duplicates:
+    get:
+      summary: Duplicate Listings Rollup
+      deprecated: false
+      description: ''
+      tags:
+        - Listings API
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: your_api_key_here
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Duplicate listings retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /locations/listings/mark-as-duplicate:
+    post:
+      summary: Mark as duplicate
+      deprecated: false
+      description: ''
+      tags:
+        - Listings API
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: your_api_key_here
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    locationId:
+                      type: string
+                    listingItemIds:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - locationId
+                    - listingItemIds
+            example:
+              input:
+                locationId: TG9jYXRpb246NzM1Mzc=
+                listingItemIds:
+                  - TGlzdGluZ0l0ZW06MzMzMjkyOQ==
+      responses:
+        '200':
+          description: Listings marked as duplicate.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /locations/listings/mark-as-not-duplicate:
+    post:
+      summary: Mark as not duplicate
+      deprecated: false
+      description: ''
+      tags:
+        - Listings API
+        - Listings
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: your_api_key_here
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    listingItemIds:
+                      type: array
+                      items:
+                        type: string
+                    locationId:
+                      type: string
+                  required:
+                    - listingItemIds
+                    - locationId
+            example:
+              input:
+                listingItemIds:
+                  - TGlzdGluZ0l0ZW06MzMzMjkzOA==
+                locationId: test1
+      responses:
+        '200':
+          description: Listings marked as not duplicate.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /api/v1/users:
+    get:
+      summary: Test Get users
+      deprecated: false
+      description: Retrieves a list of users.
+      tags:
+        - Listings API
+      parameters:
+        - name: limit
+          in: query
+          description: Specific the max number of records to return per page.
+          required: false
+          example: '10'
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Indicate current page for results you want to retrieve.
+          required: false
+          example: '1'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Indicates that the required number of pages are fetched.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    - id: 1
+                      name: John Doe
+                    - id: 2
+                      name: Jane Doe
+          headers: {}
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /api/v4/create-grid-report:
+    post:
+      summary: Create Grid Report
+      deprecated: false
+      description: >-
+        This endpoint generates a grid report based on the provided location and
+        business details.
+      operationId: createGridReport
+      tags:
+        - Grid Rank
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: API nC3IaYImyrUzMv_NH6MrzDfp-CA
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: ''
+          required: true
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locationId:
+                  type: string
+                  examples:
+                    - TG9jYXRpb246MTA0MzgzNw==q32
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                  examples:
+                    - - Debt collection
+                businessName:
+                  type: string
+                  examples:
+                    - Debt rec
+                businessStreet:
+                  type: string
+                  examples:
+                    - Aspin Commercial Tower Sheikh Zayed Road, , AE
+                businessCity:
+                  type: string
+                  examples:
+                    - ''
+                businessState:
+                  type: string
+                  examples:
+                    - ''
+                businessCountry:
+                  type: string
+                  examples:
+                    - AE
+                latitude:
+                  type: number
+                  format: double
+                  examples:
+                    - 25.2089625
+                longitude:
+                  type: number
+                  format: double
+                  examples:
+                    - 55.2724984
+                distance:
+                  type: number
+                  format: double
+                  examples:
+                    - 2.5
+                distanceUnit:
+                  type: string
+                  examples:
+                    - km
+                gridSize:
+                  type: integer
+                  examples:
+                    - 3
+            example: ''
+      responses:
+        '200':
+          description: Successfully created grid report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reportId:
+                    type: string
+                    description: ID of the created report
+                    examples:
+                      - report_12345
+          headers: {}
+        '400':
+          description: Bad Request - Invalid input data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '401':
+          description: Unauthorized - Invalid API Keys
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '404':
+          description: Not Found - Endpoint not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+components:
+  schemas:
+    Pet:
+      required:
+        - name
+        - photoUrls
+        - id
+        - category
+        - tags
+        - status
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Pet ID
+        category:
+          $ref: '#/components/schemas/Category'
+          description: group
+        name:
+          type: string
+          description: name
+          examples:
+            - doggie
+        photoUrls:
+          type: array
+          items:
+            type: string
+          description: image URL
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: tag
+        status:
+          type: string
+          description: Pet Sales Status
+          enum:
+            - available
+            - pending
+            - sold
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Category ID
+        name:
+          type: string
+          description: Category Name
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Tag ID
+        name:
+          type: string
+          description: Tag Name
+    SubCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+            - '1234'
+        name:
+          type: string
+          examples:
+            - Restaurants
+  securitySchemes: {}
+servers: []
