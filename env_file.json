@@ -1,0 +1,36 @@
+{
+  "environments": [
+    {
+      "baseUrl": "https://api.synup.com/api/v4",
+      "baseUrls": {
+        "default": "https://api.synup.com/api/v4"
+      },
+      "registrationCenters": [],
+      "parameters": {
+        "cookie": [],
+        "query": [],
+        "header": [],
+        "body": []
+      },
+      "variables": [
+        {
+          "name": "api_key",
+          "value": "API rnYm2SBgqH8dTOizP9BeT0IntSI",
+          "description": "",
+          "initialValue": "API rnYm2SBgqH8dTOizP9BeT0IntSI",
+          "isSync": true
+        }
+      ],
+      "name": "syn",
+      "type": "normal",
+      "ordering": 0,
+      "projectType": "HTTP"
+    }
+  ],
+  "servers": [
+    {
+      "id": "default",
+      "name": "Default Server"
+    }
+  ]
+}
