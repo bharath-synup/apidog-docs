@@ -1,0 +1,11 @@
+openapi: 3.1.0
+info:
+  title: Abc Corp
+  description: ''
+  version: 1.0.0
+tags: []
+paths: {}
+components:
+  schemas: {}
+  securitySchemes: {}
+servers: []
