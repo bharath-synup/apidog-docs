@@ -16,11 +16,12 @@ def append_project_id_to_file(project_id, file_path):
     with open(file_path, 'a') as file:
         file.write(f'{project_id}\n')
 
-def test_create_project(page: Page, client_name: str, client_logo_url: str, client_base_url: str) -> None:
+def test_create_project(page: Page, client_name: str, client_logo_url: str, client_base_url: str, client_api_docs_url: str) -> None:
     page.goto("https://app.apidog.com/user/login")
     page.get_by_placeholder("Email").click()
     page.get_by_placeholder("Email").fill("bharath.mr@synup.com")
     page.get_by_role("button", name="Continue with email").click()
+    page.wait_for_timeout(3000)
     page.get_by_role("button", name="Continue with password").click()
     page.get_by_placeholder("Password").click()
     page.get_by_placeholder("Password").fill("Synup@123")
@@ -56,6 +57,7 @@ def test_create_project(page: Page, client_name: str, client_logo_url: str, clie
     print(f'Client_name:{client_name}')
     print(f'Client_logo:{client_logo_url}')
     print(f'Client_base_url:{client_base_url}')
+    print(f'Client_api_docs_url:{client_api_docs_url}')
     project_id = extract_project_id(current_url)
 
     if project_id:
@@ -83,9 +85,26 @@ def test_create_project(page: Page, client_name: str, client_logo_url: str, clie
     # Upload the image file using Playwright
     upload_input = page.locator('input[type="file"]')
     upload_input.set_input_files(img_file_path)
+    page.wait_for_timeout(6000)
+    #set_env
+    # page.locator("//a[contains(@class, 'pui-components-global-nav-index-nav-item') and span[text()='APIs']]").click()
+    # page.locator("//div[contains(@class, 'pui-pages-api-api-manage-components-environment-bar-index-container')]//button").click()
+    # page.locator("//li[contains(@class, 'environment-menu-item') and .//div[contains(@class, 'tree-title-wrap')] and .//div[contains(text(), 'New Environment')]]").click()
 
-    # Optionally, assert if the file is uploaded correctly based on UI changes
-    page.wait_for_timeout(3000)  # wait for 3 seconds for the upload to complete
+    page.locator("//a[contains(@class, 'pui-components-global-nav-index-nav-item') and span[text()='Share Docs']]").click()
+    page.locator("(//div[contains(@class, 'DocsSItes_container')])[1]").click()
+    page.locator("//li[contains(@class, 'ui-list-item')]//h4[contains(@class, 'ui-list-item-meta-title')]//span[contains(text(), 'Custom Domain')]/ancestor::li//button[span[text()='Edit']]").click()
+    custom_domain_input = page.locator('//input[@id= "domainForm_customDomain"]')
+    custom_domain_input.wait_for(state='visible')
+    custom_domain_input.fill(client_api_docs_url)
+    cname = page.locator("//div[contains(@class, 'ui-alert-message')]//p[contains(text(), 'CNAME')]/span[contains(@class, 'pui-g-ui-kit-copyable-text-kit-index-copyable')]")
+    assert (cname.text_content() == project_id+".apidog.io"), "CNAME is not as expected"
+    print("CNAME = ", cname.text_content())
+    page.locator('//button[@type = "submit"]/span[text() = "Save"]').click()
+    print("CNAME = ", project_id+".apidog.io")
+    print("client_api_docs_url = ", client_api_docs_url)
+
+      # wait for 3 seconds for the upload to complete
 
     # Clean up: Delete the downloaded image after use
     if os.path.exists(img_file_path):
