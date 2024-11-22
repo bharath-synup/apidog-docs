@@ -4,7 +4,6 @@ info:
   version: 1.0.0
   description: Auto-generated API documentation from cURL command
 servers:
-  - url: https://api.synup.com
     description: Main production server
 paths:
   /api/v4/create-grid-report:
