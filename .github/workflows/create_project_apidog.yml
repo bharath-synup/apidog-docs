@@ -70,6 +70,15 @@ jobs:
           name: project_ids
           path: project_ids.txt
 
+      - name: Commit customized env_file.json
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add "${{ github.event.inputs.client_name }}_env.json"
+          git commit -m "Add customized environment file for ${{ github.event.inputs.client_name }}" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Optional: Commit changes if the project_ids.txt was modified
       - name: Commit changes to project_ids.txt
         run: |
