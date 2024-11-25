@@ -6,7 +6,6 @@ on:
       api_ids:
         description: 'Comma-separated list of API endpoint IDs to export individually'
         required: true
-        default: ''
 
 jobs:
   export_and_commit:
@@ -31,17 +30,19 @@ jobs:
         id: export_apis
         run: |
           IFS=',' read -ra ID_ARRAY <<< "$API_IDS"
+          mkdir -p exported_apis
 
           for ENDPOINT_ID in "${ID_ARRAY[@]}"; do
-            # Make the API call to export the endpoint
-            RESPONSE=$(curl --location --request POST "https://api.apidog.com/v1/projects/${{ secrets.APIDOG_PROJECT_ID }}/export-openapi" \
+            echo "Exporting API ID: $ENDPOINT_ID"
+
+            RESPONSE=$(curl --silent --fail --location --request POST "https://api.apidog.com/v1/projects/${{ secrets.APIDOG_PROJECT_ID }}/export-openapi" \
               --header "X-Apidog-Api-Version: 2024-03-28" \
               --header "Content-Type: application/json" \
               --header "Authorization: Bearer ${{ secrets.APIDOG_EXPORT_API_KEY }}" \
               --data "{
                 \"scope\": {
                   \"type\": \"SELECTED_ENDPOINTS\",
-                  \"selectedEndpointIds\": [$ENDPOINT_ID]
+                  \"selectedEndpointIds\": [\"$ENDPOINT_ID\"]
                 },
                 \"options\": {
                   \"includeApidogExtensionProperties\": false,
@@ -51,21 +52,22 @@ jobs:
                 \"exportFormat\": \"YAML\"
               }")
 
-            # Save the response to a temporary file
-            TEMP_FILE="temp_export_${ENDPOINT_ID}.yaml"
-            echo "$RESPONSE" > "$TEMP_FILE"
-
-            # Extract the first tag from the YAML file, with a fallback if empty
-            TAG=$(yq e '.tags[0]' "$TEMP_FILE" || echo "untagged_${ENDPOINT_ID}")
-            if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
-              TAG="untagged_${ENDPOINT_ID}"
+            if [ $? -ne 0 ] || [ -z "$RESPONSE" ]; then
+              echo "Error exporting API ID: $ENDPOINT_ID" >&2
+              continue
             fi
 
-            # Construct the file name using the extracted tag
-            FILE_NAME="exported_api_${TAG}.yaml"
+            TEMP_FILE="exported_apis/temp_export_${ENDPOINT_ID}.yaml"
+            echo "$RESPONSE" > "$TEMP_FILE"
 
-            # Move the temporary file to the final named file
+            # Extract and sanitize the tag
+            TAG=$(yq e '.tags[0]' "$TEMP_FILE" || echo "untagged_${ENDPOINT_ID}")
+            TAG=${TAG:-"untagged_${ENDPOINT_ID}"}
+            SANITIZED_TAG=$(echo "$TAG" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g' | sed -E 's/^_+|_+$//g')
+
+            FILE_NAME="exported_apis/${SANITIZED_TAG}.yaml"
             mv "$TEMP_FILE" "$FILE_NAME"
+            echo "Saved API ID $ENDPOINT_ID as $FILE_NAME"
           done
 
       - name: Commit exported YAML files
@@ -73,10 +75,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Add each exported YAML file to Git
-          for FILE in exported_api_*.yaml; do
-            git add "$FILE"
-          done
-
-          git commit -m "Exported individual APIs from Apidog"
+          git add exported_apis/*.yaml
+          git commit -m "Exported APIs: ${{ github.event.inputs.api_ids }}"
           git push
