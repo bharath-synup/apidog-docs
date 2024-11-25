@@ -47,6 +47,17 @@ jobs:
         run: |
           python -m playwright install
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      # Update env_file.json with client_base_url and client_name
+      - name: Create customized env_file.json
+        run: |
+          jq '.environments[0].baseUrl = "https://${{ github.event.inputs.client_base_url }}" |
+              .environments[0].baseUrls.default = "https://${{ github.event.inputs.client_base_url }}" |
+              .environments[0].name = "${{ github.event.inputs.client_name }}"' env_file.json > "${{ github.event.inputs.client_name }}_env.json"
+        shell: bash
+
       # Run the Playwright test with the provided client name
       - name: Run Playwright test
         run: |
